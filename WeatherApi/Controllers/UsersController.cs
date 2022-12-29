@@ -14,6 +14,8 @@ namespace WeatherApi.Controllers
         {
             this.db = db;
         }
+        #region HTTPGetUsers
+        
 
         [HttpGet(Name ="GetUsers")]
         public IEnumerable<User> Get()
@@ -35,7 +37,7 @@ namespace WeatherApi.Controllers
                 return null;
             }
         }
-        
+        #endregion
         [HttpPost(Name ="AddUser")]
         public async Task<string> AddUserAsync(string username, string password)
         {
@@ -48,6 +50,26 @@ namespace WeatherApi.Controllers
             await db.SaveChangesAsync();
             
             return "Новый пользователь добавлен";
+        }
+        [HttpPut("AddFavoriteTownToUser")]
+        public async Task<bool> AddTownToUser(string username, int townid)
+        {
+            User? UserToChange = db.Users.FirstOrDefault(p => p.UserName == username);
+            if (UserToChange != null)
+            {
+                Towns? town = db.Town.FirstOrDefault(p => p.id_town == townid);
+                UserToChange.FavoriteTowns.Add(new FavoriteTowns
+                {
+                    Towns = town,
+                    User = UserToChange
+                });
+                await db.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

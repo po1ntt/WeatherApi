@@ -9,15 +9,15 @@
         public string timezone { get; set; }
         public string timezone_abbreviation { get; set; }
         public double elevation { get; set; }
-        public HourlyUnits hourly_units { get; set; }
-        public Hourly hourly { get; set; }
-        public class Hourly
+        public HourlyUnitsScr hourly_units { get; set; }
+        public HourlyScr hourly { get; set; }
+        public class HourlyScr
         {
             public List<string> time { get; set; }
             public List<double> temperature_2m { get; set; }
         }
 
-        public class HourlyUnits
+        public class HourlyUnitsScr
         {
             public string time { get; set; }
             public string temperature_2m { get; set; }
