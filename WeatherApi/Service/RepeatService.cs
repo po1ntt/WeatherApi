@@ -58,7 +58,7 @@ namespace WeatherApi.Service
                             weather.temperatyre_2m = string.Join(' ', dataweather.hourly.temperature_2m);
                             weather.UpdateDate = DateTime.Now;
                             await db.SaveChangesAsync();
-                            Console.WriteLine($"Погода города с названием {town.name}");
+                            Console.WriteLine($"Погода города с названием - {town.name} изменена");
                         }
                     }
                 }
