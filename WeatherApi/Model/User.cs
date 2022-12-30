@@ -14,8 +14,8 @@ namespace WeatherApi.Model
         public int Id { get; set; }
         public string? UserName { get; set; }
         public string? UserPassword { get; set; }
-
-
         public virtual ICollection<FavoriteTowns>? FavoriteTowns { get; set; }
     }
 }
+
+

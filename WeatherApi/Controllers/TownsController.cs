@@ -31,8 +31,8 @@ namespace WeatherApi.Controllers
             {
                 string responsebody = await result.Content.ReadAsStringAsync();
                 Root? data = JsonConvert.DeserializeObject<Root>(responsebody);
-             
-             
+
+
                 return data;
 
             }
@@ -40,11 +40,11 @@ namespace WeatherApi.Controllers
             {
                 return null;
             }
-           
+
 
         }
-       
-       
+
+
 
     }
 }

@@ -6,10 +6,10 @@ namespace WeatherApi.Model
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Towns> Town { get; set; }
-        public DbSet<WeatherInfo> Weather  { get; set; }
+        public DbSet<WeatherInfo> Weather { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) 
+            : base(options)
         {
             Database.EnsureCreated();
         }

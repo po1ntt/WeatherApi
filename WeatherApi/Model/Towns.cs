@@ -13,18 +13,13 @@ namespace WeatherApi.Model
         public string name { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
-       
         public string? locality { get; set; }
-
         public string? country { get; set; }
-
         public string? continent { get; set; }
-
-       
-
     }
-    public class Root { 
+    public class Root
+    {
         public List<Towns?>? data { get; set; }
     }
-   
+
 }

@@ -9,7 +9,7 @@ namespace WeatherApi.Controllers
     [Route("[controller]")]
     public class WeatherController
     {
-        ApplicationDbContext  db;
+        ApplicationDbContext db;
         public WeatherController(ApplicationDbContext db)
         {
             this.db = db;
@@ -19,23 +19,23 @@ namespace WeatherApi.Controllers
         public async Task<WeatherToScratch>? GetWeather(Towns town)
         {
             HttpClient client = new HttpClient();
-          
-           
-                var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m&past_days=7")).Result;
-                resultweather.EnsureSuccessStatusCode();
-                if (resultweather != null)
-                {
-                    string responsebodyweather = await resultweather.Content.ReadAsStringAsync();
-                    WeatherToScratch? dataweather = JsonConvert.DeserializeObject<WeatherToScratch>(responsebodyweather);
 
-                    return dataweather;
-                }
-                else
-                {
-                    return null;
-                }
-            
-           
+
+            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m&past_days=7")).Result;
+            resultweather.EnsureSuccessStatusCode();
+            if (resultweather != null)
+            {
+                string responsebodyweather = await resultweather.Content.ReadAsStringAsync();
+                WeatherToScratch? dataweather = JsonConvert.DeserializeObject<WeatherToScratch>(responsebodyweather);
+
+                return dataweather;
+            }
+            else
+            {
+                return null;
+            }
+
+
 
 
 
@@ -76,16 +76,18 @@ namespace WeatherApi.Controllers
             WeatherToScratch weatherToScratch = GetWeather(townsr).Result;
             db.Weather.Add(new WeatherInfo
             {
-                Towns= townsr,
+                Towns = townsr,
                 time = string.Join(' ', weatherToScratch.hourly.time),
-                temperatyre_2m = string.Join(' ', weatherToScratch.hourly.temperature_2m)
-                
+                temperatyre_2m = string.Join(' ', weatherToScratch.hourly.temperature_2m),
+                UpdateDate = DateTime.Now
+               
+
             });
             db.SaveChanges();
             return "Погода добавлена";
-            
+
         }
-        
+
         [HttpPost("TownLocalizationByName")]
         public async Task<Towns> TownLocalizationByName(string nametown)
         {
@@ -116,13 +118,8 @@ namespace WeatherApi.Controllers
                     realnamecity = item.name;
 
                 }
-
-                Towns town = db.Town.FirstOrDefault(p => p.name == realnamecity);
-               
-                    return town;
-
-                
-
+                Towns? town = db.Town.FirstOrDefault(p => p.name == realnamecity);
+                return town;
             }
             else
             {
@@ -134,10 +131,10 @@ namespace WeatherApi.Controllers
         [HttpPost("AddNewTown")]
         public async Task<string> AddNewTown(string nametown)
         {
-            Towns? townsforsecuring = db.Town.FirstOrDefault(p => p.name.Contains(nametown));
-            if (townsforsecuring != null)
+            Towns? townsforsearch = db.Town.FirstOrDefault(p => p.name.Contains(nametown));
+            if (townsforsearch != null)
             {
-                await addWeatherToTown(townsforsecuring);
+                await addWeatherToTown(townsforsearch);
                 return "Погода добавлена";
 
             }

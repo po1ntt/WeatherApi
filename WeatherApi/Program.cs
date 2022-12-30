@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WeatherApi.Model;
+using WeatherApi.Service;
+
 
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+      
 
         // Add services to the container.
 
@@ -13,7 +17,8 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        builder.Services.AddHostedService<RepeatService>();
+       
         // получаем строку подключения из файла конфигурации
         string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
