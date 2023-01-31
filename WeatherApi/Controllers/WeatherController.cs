@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using WeatherApi.Model;
 
@@ -14,7 +18,28 @@ namespace WeatherApi.Controllers
         {
             this.db = db;
         }
+
+
         #region getinfoweather
+        [HttpGet("ReturnWeatherByTown")]
+        public async Task<WeatherInfo>? ReturnWeatherByTown(int id_town)
+        {
+            var dataWeather = await db.Weather.FirstAsync(p => p.Towns.id_town == id_town);
+            if (dataWeather != null)
+            {
+                return dataWeather;
+            }
+            else
+            {
+                Debug.WriteLine("Погода по данному городу не найдена!");
+                return null;
+            }
+
+
+
+
+
+        }
         [HttpGet("GetWeaherTown")]
         public async Task<WeatherToScratch>? GetWeather(Towns town)
         {
@@ -131,19 +156,29 @@ namespace WeatherApi.Controllers
         [HttpPost("AddNewTown")]
         public async Task<string> AddNewTown(string nametown)
         {
-            Towns? townsforsearch = db.Town.FirstOrDefault(p => p.name.Contains(nametown));
-            if (townsforsearch != null)
+            Towns towns = await TownLocalizationByName(nametown);
+            bool result = await CheckExistsTown(towns.name);
+            if (result == false)
             {
-                await addWeatherToTown(townsforsearch);
-                return "Погода добавлена";
-
+                await addWeatherToTown(towns);
+                return "Новый город добавлен";
             }
             else
             {
-                Towns towns = await TownLocalizationByName(nametown);
-                await addWeatherToTown(towns);
-                return "Это работает";
-
+                return "Город уже существует";
+            }
+           
+        }
+        public async Task<bool> CheckExistsTown(string nametown)
+        {
+            var checktown = await db.Town.FirstAsync(p => p.name == nametown);
+            if(checktown != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
 
         }
