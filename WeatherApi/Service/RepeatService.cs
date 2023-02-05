@@ -32,14 +32,14 @@ namespace WeatherApi.Service
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 HttpResponseMessage resultweather = null;
-                var towns = db.Town.ToList();
+                var towns = db.town.ToList();
                 foreach (var town in towns)
                 {
                     HttpClient client = new HttpClient();
 
                     try
                     {
-                        resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m&past_days=7")).Result;
+                        resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&past_days=7")).Result;
                         resultweather.EnsureSuccessStatusCode();
 
                     }
@@ -53,12 +53,26 @@ namespace WeatherApi.Service
                         {
                             string responsebodyweather = await resultweather.Content.ReadAsStringAsync();
                             WeatherToScratch? dataweather = JsonConvert.DeserializeObject<WeatherToScratch>(responsebodyweather);
-                            var weather = db.Weather.FirstOrDefault(p => p.Towns.id_town == town.id_town);
+                            
+                            var weather = db.weather.FirstOrDefault(p => p.Towns.id_town == town.id_town);
+                            if(weather!= null)
+                            {
+
+                            
                             weather.time = string.Join(' ', dataweather.hourly.time);
-                            weather.temperatyre_2m = string.Join(' ', dataweather.hourly.temperature_2m);
-                            weather.UpdateDate = DateTime.Now;
+                            weather.temperatyre2M = string.Join(' ', dataweather.hourly.temperature_2m);
+
+                            weather.precipitation = string.Join(' ', dataweather.hourly.precipitation);
+                            weather.sunrise = string.Join(' ', dataweather.daily.sunrise);
+                            weather.sunset = string.Join(' ', dataweather.daily.sunset);
+                            weather.relativehimidity_2m = string.Join(' ', dataweather.hourly.relativehumidity_2m);
+                            weather.temperatyre_2m_max = string.Join(' ', dataweather.daily.temperature_2m_max);
+                            weather.temperatyre_2m_min = string.Join(' ', dataweather.daily.temperature_2m_min);
+                            weather.dateDay = string.Join(' ', dataweather.daily.dateDay);
+                            weather.updateDate = DateTime.Now;
                             await db.SaveChangesAsync();
                             Console.WriteLine($"Погода города с названием - {town.name} изменена");
+                           }
                         }
                     }
                 }

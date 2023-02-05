@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 using WeatherApi.Model;
 using WeatherApi.Service;
 
@@ -18,24 +19,19 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddHostedService<RepeatService>();
-       
+        builder.Services.AddDbContext<ApplicationDbContext>();
         // получаем строку подключения из файла конфигурации
-        string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-
-        // добавляем контекст ApplicationContext в качестве сервиса в приложение
-        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
         var app = builder.Build();
-
+       
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseHttpLogging();
         }
 
-        app.UseHttpsRedirection();
 
-        app.UseAuthorization();
 
         app.MapControllers();
 

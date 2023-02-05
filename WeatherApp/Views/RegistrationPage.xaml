@@ -2,11 +2,26 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherApp.Views.RegistrationPage"
-             Title="RegistrationPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+              Title=""
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:inputkit="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+             BackgroundColor="#111111"
+             xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
+             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui">
+    <Grid>
+        <inputkit:FormView Background="#373737" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="300">
+
+            <inputkit:AdvancedEntry IconImage="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.User}}" Title="Логин">
+                <inputkit:AdvancedEntry.Validations>
+                    <validation:MinLengthValidation MinLength="5"></validation:MinLengthValidation>
+                </inputkit:AdvancedEntry.Validations>
+            </inputkit:AdvancedEntry>
+            <inputkit:AdvancedEntry  IconImage="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.Key}}" Title="Пароль" IsPassword="True" TextColor="White" BorderColor="White">
+                <inputkit:AdvancedEntry.Validations>
+                    <validation:MinLengthValidation MinLength="8"></validation:MinLengthValidation>
+                </inputkit:AdvancedEntry.Validations>
+            </inputkit:AdvancedEntry>
+            <Button Text="Зарегистрироваться" CornerRadius="5" BackgroundColor="#284cd1" TextColor="White" inputkit:FormView.IsSubmitButton="True"></Button>
+        </inputkit:FormView>
+    </Grid>
 </ContentPage>

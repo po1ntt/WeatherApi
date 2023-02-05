@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WeatherApp.Models;
+
+namespace WeatherApp.Service
+{
+    public class WeatherConvertToDaily
+    {
+        public List<Daily> ReturnDaily(Weather weather)
+        {
+            List<Daily> listDaily = new List<Daily>();
+
+            var dateDayList = weather.dateDay.Split(' ');
+            var sunset = weather.sunset.Split(' ');
+            var temperatyre_2m = weather.temperatyre2M.Split(' ');
+            var temperatyre_min = weather.temperatyre_2m_min.Split(' ');
+            var temperatyre_max = weather.temperatyre_2m_max.Split(' ');
+            var sunrise = weather.sunrise.Split(' ');
+            var time = weather.time.Split(' ');
+            var relativehimidity_2m = weather.relativehimidity_2m.Split(' ');
+            for( int i = 1 ; i == 7 ; i++  )
+            {
+                Daily daily = null;
+                daily.Id = i;
+                daily.dateDay = Convert.ToDateTime(dateDayList[0]);
+                dateDayList = dateDayList.Skip(1).ToArray();
+                daily.sunset = Convert.ToDateTime(sunset[0]);
+                sunset = sunset.Skip(1).ToArray();
+                daily.sunrise = Convert.ToDateTime(sunset[0]);
+                sunrise = sunrise.Skip(1).ToArray();
+                daily.temperature_2m_max = Convert.ToDouble(temperatyre_max[0]);
+                temperatyre_max = temperatyre_max.Skip(1).ToArray();
+                daily.temperature_2m_min = Convert.ToDouble(temperatyre_min[0]);
+                temperatyre_min = temperatyre_min.Skip(1).ToArray();
+                for (int u = 0; u == 23; u++)
+                {
+                    double item = Convert.ToDouble(temperatyre_2m[u]);
+                    daily.temperature_2m.Add(item);
+                }
+                temperatyre_2m = temperatyre_2m.Skip(24).ToArray();
+                for (int u = 0; u == 23; u++)
+                {
+                    DateTime item = Convert.ToDateTime(time[u]);
+                    daily.times.Add(item);
+                }
+                time = time.Skip(24).ToArray();
+                for (int u = 0; u == 23; u++)
+                {
+                    int item = Convert.ToInt32(relativehimidity_2m[u]);
+                    daily.relativehumidity_2m.Add(item);
+                }
+                relativehimidity_2m = relativehimidity_2m.Skip(24).ToArray();
+                listDaily.Add(daily);
+
+            }
+            return listDaily;
+        }
+    }
+}

@@ -1,14 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WeatherApi.Model
+namespace WeatherApp.Models
 {
     public class Towns
     {
-        [Key]
         public int id_town { get; set; }
         public string? name { get; set; }
         public double latitude { get; set; }
@@ -17,9 +16,4 @@ namespace WeatherApi.Model
         public string? country { get; set; }
         public string? continent { get; set; }
     }
-    public class Root
-    {
-        public List<Towns?>? data { get; set; }
-    }
-
 }

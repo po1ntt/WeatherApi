@@ -8,6 +8,7 @@ using static System.Net.WebRequestMethods;
 using static WeatherApi.Model.WeatherInfo;
 using System.Runtime.Serialization;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace WeatherApi.Controllers
 {
@@ -21,6 +22,14 @@ namespace WeatherApi.Controllers
         {
             this.db = db;
         }
+        [HttpGet("GetTowns")]
+        public async Task<List<Towns>> GetTownsAsync()
+        {
+            List<Towns> towns = await db.town.ToListAsync();
+            return towns;
+        }
+
+
         [HttpGet(Name = "GetTownInfoByName")]
         public async Task<Root>? Get(string nametown)
         {

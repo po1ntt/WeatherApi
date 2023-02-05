@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WeatherApi.Model;
 
 namespace WeatherApi.Controllers
@@ -17,59 +19,58 @@ namespace WeatherApi.Controllers
         #region HTTPGetUsers
 
 
-        [HttpGet(Name = "GetUsers")]
+        [HttpGet("GetUsers")]
         public IEnumerable<User> Get()
         {
-            var collection = db.Users.ToList();
+            var collection = db.users.ToList();
             return collection;
         }
-        [HttpGet("FindUser")]
 
-        public User? FindUser(string username, string password)
-        {
-            var user = db.Users.FirstOrDefault(p => p.UserName == username && p.UserPassword == password);
-            if (user != null)
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }
-        }
+      
         #endregion
-        [HttpPost(Name = "AddUser")]
+        [HttpPost("AddUser")]
         public async Task<string> AddUserAsync(string username, string password)
         {
-            db.Users.Add(new User
+            db.users.Add(new User
             {
 
-                UserName = username,
-                UserPassword = password
+                userName = username,
+                userPassword = password
             });
             await db.SaveChangesAsync();
 
             return "Новый пользователь добавлен";
         }
-        [HttpPut("AddFavoriteTownToUser")]
-        public async Task<bool> AddTownToUser(string username, int townid)
+        [HttpGet("LoginUser")]
+        public async Task<User> LoginUser(string username, string password)
         {
-            User? UserToChange = db.Users.FirstOrDefault(p => p.UserName == username);
-            if (UserToChange != null)
+           var user = db.users.FirstOrDefault(p=> p.userName == username && p.userPassword == password);
+           return user;
+        }
+        [HttpPost("AddFavoriteTownToUser")]
+        public async Task<bool> AddTownToUser(FavoriteTowns favoriteTowns)
+        {
+            var town = await db.town.FirstAsync(p => p.id_town == favoriteTowns.townId);
+            db.favoriteTowns.Add(new FavoriteTowns {
+                userId = favoriteTowns.userId,
+                Towns = town
+            });
+           
+            await db.SaveChangesAsync();
+       
+            return true;
+        }
+        [HttpGet("GetFavotesTowns")]
+        public async Task<List<Towns>> GetFavoritesTowns(User user)
+        {
+            List<Towns> listtown = new List<Towns>();
+            var listfav = db.favoriteTowns.ToList().Where(p => p.userId == user.id);
+            foreach(var item in listfav)
             {
-                Towns? town = db.Town.FirstOrDefault(p => p.id_town == townid);
-                UserToChange.FavoriteTowns.Add(new FavoriteTowns
-                {
-                    Towns = town,
-                    User = UserToChange
-                });
-                await db.SaveChangesAsync();
-                return true;
+                var towninfavorite = await db.town.FirstAsync(p => p.id_town == item.townId);
+                listtown.Add(towninfavorite);
             }
-            else
-            {
-                return false;
-            }
+            return listtown;
         }
     }
 }

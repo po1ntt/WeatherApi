@@ -3,12 +3,16 @@
     x:Class="WeatherApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:WeatherApp"
+    xmlns:local="clr-namespace:WeatherApp.Views"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="authorize"
+        ContentTemplate="{DataTemplate local:AuthorizePage}"
+        Route="AuthorizePage" />
+    <ShellContent
+        Title="home"
+        ContentTemplate="{DataTemplate local:HomePage}"
+        Route="HomePage" />
 
 </Shell>

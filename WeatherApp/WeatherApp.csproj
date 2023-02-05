@@ -49,15 +49,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\" />
-	  <Folder Include="ViewsModels\" />
+	  <None Remove="Platforms\Android\Resources\values\network_security_config.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="UraniumUI" Version="2.3.0" />
+	  <PackageReference Include="UraniumUI.Dialogs.Mopups" Version="2.3.0" />
+	  <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.3.0" />
+	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.3.0" />
+	  <PackageReference Include="UraniumUI.Material" Version="2.3.0" />
+	  <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\AuthorizePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\FavoriteTownsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\HomePage.xaml">
@@ -70,5 +75,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionWeatherAppHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarWeatherAppHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

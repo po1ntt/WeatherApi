@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using WeatherApi.Model;
 
 namespace WeatherApi.Controllers
@@ -24,7 +25,7 @@ namespace WeatherApi.Controllers
         [HttpGet("ReturnWeatherByTown")]
         public async Task<WeatherInfo>? ReturnWeatherByTown(int id_town)
         {
-            var dataWeather = await db.Weather.FirstAsync(p => p.Towns.id_town == id_town);
+            var dataWeather = await db.weather.FirstAsync(p => p.Towns.id_town == id_town);
             if (dataWeather != null)
             {
                 return dataWeather;
@@ -46,7 +47,7 @@ namespace WeatherApi.Controllers
             HttpClient client = new HttpClient();
 
 
-            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m&past_days=7")).Result;
+            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&past_days=7")).Result;
             resultweather.EnsureSuccessStatusCode();
             if (resultweather != null)
             {
@@ -99,23 +100,25 @@ namespace WeatherApi.Controllers
         public async Task<string> addWeatherToTown(Towns townsr)
         {
             WeatherToScratch weatherToScratch = GetWeather(townsr).Result;
-            db.Weather.Add(new WeatherInfo
+            db.weather.Add(new WeatherInfo
             {
                 Towns = townsr,
                 time = string.Join(' ', weatherToScratch.hourly.time),
-                temperatyre_2m = string.Join(' ', weatherToScratch.hourly.temperature_2m),
-                UpdateDate = DateTime.Now
+                temperatyre2M = string.Join(' ', weatherToScratch.hourly.temperature_2m),
+                updateDate = DateTime.Now
                
 
             });
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return "Погода добавлена";
 
         }
 
-        [HttpPost("TownLocalizationByName")]
-        public async Task<Towns> TownLocalizationByName(string nametown)
+        [HttpPost]
+        [Route("addnewtown")]
+        public async Task<Towns> AddNewTown([FromBody]string nametown)
         {
+            Towns town = new Towns();
             HttpClient client = new HttpClient();
             string realnamecity = "";
             var result = client.GetAsync(string.Format($"http://api.positionstack.com/v1/forward?access_key=919d39c1f3433190510852eb038055cb&query={nametown}&limit=1")).Result;
@@ -126,61 +129,64 @@ namespace WeatherApi.Controllers
                 Root? data = JsonConvert.DeserializeObject<Root>(responsebody);
                 foreach (var item in data.data.ToList())
                 {
-                    db.Town.Add(new Towns
-                    {
-                        latitude = item.latitude,
-                        name = item.name,
-
-                        longitude = item.longitude,
-                        continent = item.continent,
-                        country = item.country,
-                        locality = item.locality,
-
-
-
-                    });
-                    db.SaveChanges();
                     realnamecity = item.name;
 
+                    var checkexiststown = db.weather.FirstOrDefault(p => p.Towns.name == realnamecity);
+                    if (checkexiststown != null)
+                    {
+                        town = await db.town.FirstAsync(p => p.id_town == checkexiststown.townsId);
+                        return town;
+                    }
+                    else
+                    {
+
+                        db.town.Add(new Towns
+                        {
+                            latitude = item.latitude,
+                            name = item.name,
+
+                            longitude = item.longitude,
+                            continent = item.continent,
+                            country = item.country,
+                            locality = item.locality,
+
+
+
+                        });
+                        await db.SaveChangesAsync();
+                        town =  await db.town.FirstAsync(p => p.name == realnamecity);
+                        WeatherToScratch weatherToScratch = GetWeather(town).Result;
+                        db.weather.Add(new WeatherInfo
+                        {
+                            Towns = town,
+                            time = string.Join(' ', weatherToScratch.hourly.time),
+                            temperatyre2M = string.Join(' ', weatherToScratch.hourly.temperature_2m),
+                            precipitation = string.Join(' ', weatherToScratch.hourly.precipitation),
+                            sunrise = string.Join(' ', weatherToScratch.daily.sunrise),
+                            sunset = string.Join(' ',weatherToScratch.daily.sunset),
+                            relativehimidity_2m = string.Join(' ', weatherToScratch.hourly.relativehumidity_2m),
+                            temperatyre_2m_max = string.Join(' ', weatherToScratch.daily.temperature_2m_max),
+                            temperatyre_2m_min = string.Join(' ', weatherToScratch.daily.temperature_2m_min),
+                            dateDay = string.Join(' ', weatherToScratch.daily.dateDay),
+                            updateDate = DateTime.Now
+
+
+                        });
+                        await db.SaveChangesAsync();
+                        return town;
+                    }
+
                 }
-                Towns? town = db.Town.FirstOrDefault(p => p.name == realnamecity);
-                return town;
-            }
-            else
-            {
-                return null;
-            }
 
-
-        }
-        [HttpPost("AddNewTown")]
-        public async Task<string> AddNewTown(string nametown)
-        {
-            Towns towns = await TownLocalizationByName(nametown);
-            bool result = await CheckExistsTown(towns.name);
-            if (result == false)
-            {
-                await addWeatherToTown(towns);
-                return "Новый город добавлен";
             }
-            else
-            {
-                return "Город уже существует";
-            }
+            return town;
            
         }
-        public async Task<bool> CheckExistsTown(string nametown)
+        [HttpGet("GetWeatherByTown")]
+        public async Task<WeatherInfo> GetWeatherByTown(int id_town)
         {
-            var checktown = await db.Town.FirstAsync(p => p.name == nametown);
-            if(checktown != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
+            WeatherInfo? weather = await db.weather.FirstAsync(p => p.Towns.id_town == id_town);
+            return weather;
         }
     }
 }
