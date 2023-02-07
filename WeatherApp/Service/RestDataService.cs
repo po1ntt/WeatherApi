@@ -1,4 +1,5 @@
 ﻿
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,11 +10,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WeatherApp.Models;
+using WeatherApp.ViewsModels;
 
 namespace WeatherApp.Service
 {
     
-    public class RestDataService : IRestDataService
+    public class RestDataService
     {
         public HttpClient httpclient;
         private readonly string Adress;
@@ -29,9 +31,9 @@ namespace WeatherApp.Service
             };
         }
 
-        public async Task<bool> AddFavoriteTown(FavoriteTowns favoriteTowns)
+        public async Task<string> AddFavoriteTown(FavoriteTowns favoriteTowns)
         {
-            bool result = false;
+            string result = "ghj";
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -45,8 +47,7 @@ namespace WeatherApp.Service
                 HttpResponseMessage response = await httpclient.PostAsync($"{Adress}/Users/AddFavoriteTownToUser", favtowns);
                 if (response.IsSuccessStatusCode)
                 {
-                    string data = await response.Content.ReadAsStringAsync();
-                    result = JsonSerializer.Deserialize<bool>(data, jsonSerializerOptions);
+                    result = await response.Content.ReadAsStringAsync();
                 }
                 else
                 {
@@ -136,6 +137,7 @@ namespace WeatherApp.Service
             }
             try
             {
+
                 HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Towns/GetTowns");
                 if (response.IsSuccessStatusCode)
                 {
@@ -154,8 +156,64 @@ namespace WeatherApp.Service
             }
             return towns;
         }
+        public async Task<List<Towns>> GetFavTowns(Users users)
+        {
+            List<Towns> towns = new List<Towns>();
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                Console.WriteLine("504");
+                return towns;
+            }
+            try
+            {
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/GetFavTowns?id_user={users.id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    towns = JsonSerializer.Deserialize<List<Towns>>(data, jsonSerializerOptions);
+                }
+                else
+                {
+                    Console.WriteLine("202");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return towns;
+            }
+            return towns;
+        }
 
-
+        public async Task<bool> checkIsFavoriteTown(Towns towns)
+        {
+            bool result = false;
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                Console.WriteLine("504");
+                return result;
+            }
+            try
+            {
+               
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/CheckExistFavorite?townid={towns.id_town}&user_id=2");
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    result = JsonSerializer.Deserialize<bool>(data, jsonSerializerOptions);
+                }
+                else
+                {
+                    Console.WriteLine("202");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return result;
+            }
+            return result;
+        }
 
         public async Task<Towns> GetWeatherInfoByTown(int id_town)
         {

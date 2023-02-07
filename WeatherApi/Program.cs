@@ -18,8 +18,8 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddHostedService<RepeatService>();
         builder.Services.AddDbContext<ApplicationDbContext>();
+        builder.Services.AddHostedService<RepeatService>();
         // получаем строку подключения из файла конфигурации
         var app = builder.Build();
        

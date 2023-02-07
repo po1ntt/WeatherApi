@@ -53,8 +53,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
 	  <PackageReference Include="UraniumUI" Version="2.3.0" />
-	  <PackageReference Include="UraniumUI.Dialogs.Mopups" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Material" Version="2.3.0" />

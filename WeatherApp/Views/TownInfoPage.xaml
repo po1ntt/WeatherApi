@@ -2,11 +2,37 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherApp.Views.TownInfoPage"
-             Title="TownInfoPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             Title="NameTown"
+             Background="#111"
+             >
+    
+    <VerticalStackLayout Padding="10">
+        <Label TextColor="White" Text="По дням:" FontSize="23" FontAttributes="Bold"></Label>
+        <ListView HeightRequest="100"></ListView>
+        <Grid  BackgroundColor="Grey" Margin="0,0,0,20" HeightRequest="300">
+            <Label  TextColor="White">diagram</Label>
+        </Grid>
+        <Grid BackgroundColor="Grey" HeightRequest="150" Margin="0,0,0,20">
+            <Label TextColor="White">diagram</Label>
+        </Grid>
+        <Grid BackgroundColor="Gray" Padding="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+
+
+            </Grid.ColumnDefinitions>
+            <StackLayout>
+                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Закат: 8.43"></Label>
+                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Восход: 8.43"></Label>
+            </StackLayout>
+          
+            <StackLayout Grid.Column="2">
+                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Max: 8.43 C"></Label>
+                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Min: 8.43 C"></Label>
+            </StackLayout>
+
+
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>

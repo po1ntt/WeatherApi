@@ -9,11 +9,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <!-- 👇 Define right after your local Colors.xaml. -->
-                <material:ColorResource />
 
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <!-- 👇 Define right after your local Styles.xaml -->
-                <material:StyleResource />
 
             </ResourceDictionary.MergedDictionaries>
             

@@ -2,90 +2,174 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherApp.Views.HomePage"
-             Title=""
+             Title="Главная страница"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:inputkit="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
-             BackgroundColor="#111111"
+             BackgroundColor="#111"
              xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
-             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui">
-    <VerticalStackLayout Padding="10">
-        <Frame CornerRadius="5" HeightRequest="150" Margin="10" BackgroundColor="#373737">
-            <StackLayout>
-             <uranium:AutoCompleteTextField ItemsSource="{Binding TownsListNames}" Icon="{FontImage Color=Black, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,10" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
-                 
-                 
-            </uranium:AutoCompleteTextField>
-                <Button Visual="Default" TextColor="Black" BackgroundColor="LightYellow" CornerRadius="5"  Text="Поиск" Padding="5" >
-                    <VisualStateManager.VisualStateGroups>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal" />
-                            <VisualState x:Name="Pressed">
-                                <VisualState.Setters>
-                                    <Setter Property="Opacity"
-                                Value="0.8" />
-                                    
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateManager.VisualStateGroups>
-                </Button>
-            </StackLayout>
-        </Frame>
+             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+             xmlns:vievmodel="clr-namespace:WeatherApp.ViewsModels"
+             xmlns:xct="clr-namespace:CommunityToolkit.Maui.Core.Handlers;assembly=CommunityToolkit.Maui.Core"
+             xmlns:temsel="clr-namespace:WeatherApp"
+             xmlns:model ="clr-namespace:WeatherApp.Models"
+             x:Name="HomePageG"
+             
+           >
+    <ContentPage.BindingContext>
+        <vievmodel:HomeVM></vievmodel:HomeVM>
+    </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Secondary" Text="Выйти"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
        
-        <Frame CornerRadius="5" HeightRequest="250" Margin="10" BackgroundColor="#373737">
+    </ContentPage.Resources>
+    <VerticalStackLayout Padding="10">
+        <StackLayout Margin="10">
+            <Grid Margin="0,0,0,10">
+                <uranium:TextField  Text="{Binding SearchInfo}" Icon="{FontImage Color=Black, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,0" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
+
+
+                </uranium:TextField>
+            </Grid>
+
+
+            <Button  Visual="Default" TextColor="Black" BackgroundColor="#ff087b" CornerRadius="5"  Text="Поиск" Padding="10" >
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Pressed">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity"
+                                Value="0.8" />
+
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
+        </StackLayout>
+        <Frame CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent" BackgroundColor="#373737">
             <StackLayout>
                 <StackLayout Orientation="Horizontal">
-                    <Image WidthRequest="50">
+                    <Image WidthRequest="25" Margin="10,0,0,0">
                         <Image.Source>
                             <FontImageSource FontFamily="FASolid" Color="White" Glyph="{x:Static fa:Solid.Heart}"></FontImageSource>
                         </Image.Source>
                     </Image>
-                    <Label TextColor="White" FontSize="20" FontAttributes="Bold" Text="Избранные"></Label>
+
+                    <Label TextColor="White" Margin="10,0,0,0" FontSize="20" FontAttributes="Bold" Text="Избранные"></Label>
+                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+
                 </StackLayout>
-                <ScrollView>
-                    <ListView  ItemSelected="ListView_ItemSelected" ItemsSource="{Binding FavoritesTownList}">
+                    <ListView x:Name="FavList"  SelectionMode="Single"  ItemsSource="{Binding FavoritesTownList}">
                         <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White"  Padding="5">
+                            <DataTemplate >
+                                <ViewCell>
+                                    <Grid>
+                                        <Frame Margin="5"  BackgroundColor="White"  Padding="5">
                                    
                                     <FlexLayout JustifyContent="SpaceBetween">
                                         <Label Text="{Binding name}"></Label>
-                                        <Label Text="{Binding country}"></Label>
+                                        <StackLayout Orientation="Horizontal">
+                                                <ImageButton Command="{Binding Source={x:Reference HomePageG}, Path=BindingContext.AddOrRemoveFavorites}"  CommandParameter="{Binding}"   Margin="0,0,10,0"  Source="{FontImage Color=#ff087b, FontFamily=FASolid, Glyph={x:Static fa:Solid.Heart}}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="Opacity" Value="0.8" />
+
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </ImageButton>
+                                            <ImageButton  CommandParameter="{Binding}" Margin="0,0,5,0"   Source="{FontImage Color=#ab2446, FontFamily=FASolid, Glyph={x:Static fa:Solid.ArrowRight}}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="Opacity" Value="0.8" />
+
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </ImageButton>
+                                        </StackLayout>
                                     </FlexLayout>
                                 </Frame>
+                                 </Grid>
+                                </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </ScrollView>
             </StackLayout>
         </Frame>
-        <Frame  CornerRadius="5" HeightRequest="250" Margin="10"  BackgroundColor="#373737">
+        <Frame  CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent"  BackgroundColor="#373737">
             <StackLayout>
-                <StackLayout Orientation="Horizontal">
-                    <Image WidthRequest="50">
+                <StackLayout Orientation="Horizontal" Margin="10,0,0,0">
+                    <Image WidthRequest="25">
                         <Image.Source>
                             <FontImageSource FontFamily="FASolid" Color="White" Glyph="{x:Static fa:Solid.City}"></FontImageSource>
                         </Image.Source>
+
                     </Image>
-                    <Label TextColor="White" FontSize="20" FontAttributes="Bold" Text="Лист городов" ></Label>
+
+                    <Label TextColor="White" Margin="10,0,0,0" FontSize="20" FontAttributes="Bold" Text="Лист городов" ></Label>
+                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+
                 </StackLayout>
-                <ScrollView>
-                    <ListView ItemsSource="{Binding TownsList}">
+                    <ListView ItemsSource="{Binding TownsList}" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Never" x:Name="townlist"  >
                         <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="White" Margin="5" Padding="5">
-                                    <FlexLayout JustifyContent="SpaceBetween">
-                                        <Label Text="{Binding name}"></Label>
-                                        <Label Text="{Binding country}"></Label>
-                                    </FlexLayout>
-                                </Frame>
+                        <DataTemplate>
+                                <ViewCell>
+                                <Grid>
+                                    <Frame Margin="5"  BackgroundColor="White"  Padding="5">
+
+                                        <FlexLayout JustifyContent="SpaceBetween">
+                                            <Label Text="{Binding name}"></Label>
+                                            <StackLayout Orientation="Horizontal">
+                                            <ImageButton Command="{Binding Source={x:Reference HomePageG}, Path=BindingContext.AddOrRemoveFavorites}" CommandParameter="{Binding}"   Margin="0,0,10,0"  Source="{FontImage Color=#7a6f7d, FontFamily=FASolid, Glyph={x:Static fa:Solid.Heart}}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="Opacity" Value="0.8" />
+
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </ImageButton>
+                                                <ImageButton CommandParameter="{Binding}" Margin="0,0,5,0"   Source="{FontImage Color=#ab2446, FontFamily=FASolid, Glyph={x:Static fa:Solid.ArrowRight}}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="Opacity" Value="0.8" />
+
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </ImageButton>
+                                            </StackLayout>
+                                        </FlexLayout>
+                                    </Frame>
+                                    </Grid>
+                            </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                </ScrollView>
+
             </StackLayout>
         </Frame>
-        <Button Command="{Binding FindRandomTown}" TextColor="Black" BackgroundColor="White" CornerRadius="5" Text="Случайный город">
+        <Button  TextColor="Black" BackgroundColor="White" CornerRadius="5" Text="Случайный город">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal" />

@@ -5,14 +5,17 @@
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:inputkit="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
              Title=""
-             BackgroundColor="#111111"
+             BackgroundColor="#111"
              xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
              xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+                          xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
 
              >
+    <ContentPage.BindingContext>
+        <vm:AuthorizationVM />
+    </ContentPage.BindingContext>
 
-    
-        <Grid HorizontalOptions="Center" MaximumWidthRequest="350"  VerticalOptions="Center">
+    <Grid HorizontalOptions="Center" MaximumWidthRequest="350"  VerticalOptions="Center">
         <StackLayout>
             
             <Image WidthRequest="100" HeightRequest="100" Margin="0,0,0,10" >
@@ -20,21 +23,21 @@
                     <FontImageSource FontFamily="FASolid" Color="White" Glyph="{x:Static fa:Solid.CloudSun}"></FontImageSource>
                 </Image.Source>
             </Image>
-       
-        <Frame BackgroundColor="#373737" BorderColor="Transparent" WidthRequest="350" CornerRadius="20" Padding="10">
+
+            <Frame BackgroundColor="Transparent" BorderColor="Transparent" WidthRequest="350" CornerRadius="8" Padding="10">
             <VerticalStackLayout>
 
-                    <inputkit:AdvancedEntry Text="{Binding Login}" CornerRadius="5" IconImage="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.User}}" BorderColor="Transparent" Margin="0,10,0,10"  TitleColor="#284cd1" TextColor="Black"  Title="Login" >
-                    <inputkit:AdvancedEntry.Validations>
-                        <validation:MinLengthValidation Message="мин. символов 5"  MinLength="5"></validation:MinLengthValidation>
-                    </inputkit:AdvancedEntry.Validations>
-                </inputkit:AdvancedEntry>
-                    <inputkit:AdvancedEntry Text="{Binding Password}"  CornerRadius="5" IsPassword="True" IconImage="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.Key}}" BorderColor="Transparent"  Margin="0,0,0,10"  TitleColor="#284cd1" TextColor="Black"  Title="Password">
-                    <inputkit:AdvancedEntry.Validations>
-                            <validation:MinLengthValidation Message="мин. символов 8" MinLength="8"></validation:MinLengthValidation>
-                    </inputkit:AdvancedEntry.Validations>
-                </inputkit:AdvancedEntry>
-                <Button CornerRadius="10" TextColor="Black" StyleClass="FilledButton" BackgroundColor="White"   Text="Войти" Margin="0,0,0,10">
+                    <uranium:TextField Text="{Binding Login}" CornerRadius="5" Icon="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.User}}" BorderColor="White" Margin="0,10,0,10"  TitleColor="White" AccentColor="LightGreen" TextColor="White"  Title="Логин" >
+                        <uranium:TextField.Validations>
+                            <validation:MinLengthValidation MinLength="5"></validation:MinLengthValidation>
+                        </uranium:TextField.Validations>
+                    </uranium:TextField>
+                    <uranium:TextField Text="{Binding Password}"  CornerRadius="5" IsPassword="True" Icon="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.Key}}" BorderColor="White"  Margin="0,0,0,10"   AccentColor="LightGreen" TitleColor="White" TextColor="White"  Title="Пароль">
+                        <uranium:TextField.Validations>
+                            <validation:MinLengthValidation MinLength="8"></validation:MinLengthValidation>
+                        </uranium:TextField.Validations>
+                    </uranium:TextField>
+                    <Button Command="{Binding AutorizeUser}" Opacity="1" CornerRadius="10" TextColor="White" StyleClass="FilledButton" BackgroundColor="#ab2446"   Text="Войти" Margin="0,0,0,10">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -48,7 +51,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Button>
-                <Button CornerRadius="10" StyleClass="FilledButton" BackgroundColor="#284cd1" Text="Регистрация" TextColor="White" >
+                    <Button Command="{Binding NavToReg}" CornerRadius="10" StyleClass="FilledButton" BackgroundColor="#141be0" Margin="0,0,0,10" Text="Регистрация" TextColor="White" >
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -62,6 +65,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Button>
+                    <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="White"></ActivityIndicator>
             </VerticalStackLayout>
             </Frame>
         </StackLayout>

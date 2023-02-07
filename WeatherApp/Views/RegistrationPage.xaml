@@ -9,19 +9,23 @@
              xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
              xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui">
     <Grid>
-        <inputkit:FormView Background="#373737" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="300">
+        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="300">
+            <inputkit:FormView Margin="0,0,0,10" Spacing="10" Background="transparent" HorizontalOptions="Center" VerticalOptions="Center">
 
-            <inputkit:AdvancedEntry IconImage="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.User}}" Title="Логин">
-                <inputkit:AdvancedEntry.Validations>
-                    <validation:MinLengthValidation MinLength="5"></validation:MinLengthValidation>
-                </inputkit:AdvancedEntry.Validations>
-            </inputkit:AdvancedEntry>
-            <inputkit:AdvancedEntry  IconImage="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.Key}}" Title="Пароль" IsPassword="True" TextColor="White" BorderColor="White">
-                <inputkit:AdvancedEntry.Validations>
-                    <validation:MinLengthValidation MinLength="8"></validation:MinLengthValidation>
-                </inputkit:AdvancedEntry.Validations>
-            </inputkit:AdvancedEntry>
-            <Button Text="Зарегистрироваться" CornerRadius="5" BackgroundColor="#284cd1" TextColor="White" inputkit:FormView.IsSubmitButton="True"></Button>
-        </inputkit:FormView>
+                <uranium:TextField Text="{Binding Login}" CornerRadius="5" Icon="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.User}}" BorderColor="White" Margin="0,10,0,10"  TitleColor="White" AccentColor="LightGreen" TextColor="White"  Title="Логин" >
+                    <uranium:TextField.Validations>
+                        <validation:MinLengthValidation MinLength="5"></validation:MinLengthValidation>
+                    </uranium:TextField.Validations>
+                </uranium:TextField>
+                <uranium:TextField Text="{Binding Password}"  CornerRadius="5" IsPassword="True" Icon="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.Key}}" BorderColor="White"  Margin="0,0,0,10"   AccentColor="LightGreen" TitleColor="White" TextColor="White"  Title="Пароль">
+                    <uranium:TextField.Validations>
+                        <validation:MinLengthValidation MinLength="8"></validation:MinLengthValidation>
+                    </uranium:TextField.Validations>
+                </uranium:TextField>
+                <Button Command="{Binding RegistrationCommand}" Text="Зарегистрироваться" CornerRadius="5" BackgroundColor="#284cd1" TextColor="White" inputkit:FormView.IsSubmitButton="True"></Button>
+            </inputkit:FormView>
+            <Button Text="Обратно" Command="{Binding BackCommand}" BackgroundColor="White" TextColor="Black" CornerRadius="5" ></Button>
+        </StackLayout>
+        
     </Grid>
 </ContentPage>

@@ -48,29 +48,75 @@ namespace WeatherApi.Controllers
            return user;
         }
         [HttpPost("AddFavoriteTownToUser")]
-        public async Task<bool> AddTownToUser(FavoriteTowns favoriteTowns)
+        public async Task<string> AddTownToUser(FavoriteTowns favoriteTowns)
         {
+            bool result = await CheckExist(favoriteTowns.townId, favoriteTowns.userId);
             var town = await db.town.FirstAsync(p => p.id_town == favoriteTowns.townId);
-            db.favoriteTowns.Add(new FavoriteTowns {
-                userId = favoriteTowns.userId,
-                Towns = town
-            });
-           
-            await db.SaveChangesAsync();
+
+            if (result == false)
+            {
+                db.favoriteTowns.Add(new FavoriteTowns
+                {
+                    userId = favoriteTowns.userId,
+                    townId = favoriteTowns.townId
+                });
+
+                await db.SaveChangesAsync();
+                return "plus";
+            }
+            else
+            {
+                bool boolresult = await DeleteFavTown(favoriteTowns);
+                if(boolresult == true)
+                {
+                    return "minus";
+                }
+                else
+                {
+                    return null;
+
+                }
+            }
        
-            return true;
         }
-        [HttpGet("GetFavotesTowns")]
-        public async Task<List<Towns>> GetFavoritesTowns(User user)
+        [HttpGet("GetFavTowns")]
+        public async Task<List<Towns>> GetFavoritesTowns(int id_user)
         {
             List<Towns> listtown = new List<Towns>();
-            var listfav = db.favoriteTowns.ToList().Where(p => p.userId == user.id);
+            var listfav = db.favoriteTowns.ToList().Where(p => p.userId == id_user);
+            
             foreach(var item in listfav)
             {
-                var towninfavorite = await db.town.FirstAsync(p => p.id_town == item.townId);
+                var towninfavorite = db.town.FirstOrDefault(p => p.id_town == item.townId);
                 listtown.Add(towninfavorite);
             }
             return listtown;
+        }
+        [HttpDelete("DeleteFavTown")]
+        public async Task<bool> DeleteFavTown(FavoriteTowns towns)
+        {
+            var favtodelete = db.favoriteTowns.FirstOrDefault(p=> p.userId == towns.userId && p.townId == towns.townId);
+            if(favtodelete != null)
+            {
+                db.favoriteTowns.Remove(favtodelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        [HttpGet("CheckExistFavorite")]
+        public async Task<bool> CheckExist(int townid, int user_id)
+        {
+            bool result = false;
+            var favtown = db.favoriteTowns.FirstOrDefault(p => p.townId == townid && p.userId == user_id);
+           if(favtown != null)
+            {
+                result = true;
+            }
+            return result;
         }
     }
 }

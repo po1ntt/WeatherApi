@@ -1,5 +1,10 @@
-﻿using InputKit.Handlers;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Core;
+using InputKit.Handlers;
+using Microsoft.Maui.Controls.Compatibility.Hosting;
+using Microsoft.Maui.Controls.Handlers.Compatibility;
 using UraniumUI;
+
 using WeatherApp.Service;
 using WeatherApp.Views;
 
@@ -14,10 +19,13 @@ namespace WeatherApp
             builder
                 .UseMauiApp<App>()
                 .UseUraniumUIMaterial()
+                .UseMauiCommunityToolkit()
                 .UseUraniumUI()
+                .UseMauiCommunityToolkitCore()
+                .UseMauiCompatibility()
                 .ConfigureMauiHandlers(handlers =>{
                     handlers.AddInputKitHandlers();
-                 })
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -25,8 +33,6 @@ namespace WeatherApp
                     fonts.AddFontAwesomeIconFonts();
 
                 });
-            builder.Services.AddSingleton<IRestDataService, RestDataService>();
-            builder.Services.AddSingleton<HomePage>();
 
             return builder.Build();
         }

@@ -8,9 +8,24 @@ using System.Threading.Tasks;
 
 namespace WeatherApp.ViewsModels
 {
-    internal class BaseVm : INotifyPropertyChanged
+    public class BaseVm : INotifyPropertyChanged
     {
+        private bool _Isbusy;
 
+        public bool IsBusy
+        {
+            get => _Isbusy;
+            set {
+
+                if (_Isbusy == value)
+                    return;
+               
+                _Isbusy = value;
+                OnPropertyChanged();
+                
+            }
+        }
+       
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
