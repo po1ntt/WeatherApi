@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WeatherApp.Models;
 using WeatherApp.Service;
@@ -11,7 +12,7 @@ namespace WeatherApp.ViewsModels
 
         public ICommand AddOrRemoveFavorites { get; set; }
         public ICommand GoToWeather { get; set; }
-
+        public ICommand SearchCommand { get; set; }
 
 
 
@@ -58,9 +59,68 @@ namespace WeatherApp.ViewsModels
 
         public string SearchInfo
         {
-            get { return _SearchInfo; }
-            set { _SearchInfo = value;
+            get => _SearchInfo;
+            set { 
+                if(_SearchInfo != value)
+                {
+                    _SearchInfo = value;
+                    if (!string.IsNullOrWhiteSpace(_SearchInfo))
+                        IsEnabled = true;
+                    else
+                        IsEnabled = false;
+                   
+                    
+                    OnPropertyChanged();
+                }
+               
+            }
+        }
+        private bool _IsEnabled;
+
+        public bool IsEnabled
+        {
+            get => _IsEnabled;
+            set
+            {
+
+                if (_IsEnabled == value)
+                    return;
+
+                _IsEnabled = value;
                 OnPropertyChanged();
+
+            }
+        }
+        private bool _IsRunningForButton;
+
+        public bool IsRunningForButton
+        {
+            get => _IsRunningForButton;
+            set
+            {
+
+                if (_IsRunningForButton == value)
+                    return;
+
+                _IsRunningForButton = value;
+                OnPropertyChanged();
+
+            }
+        }
+        private bool _IsRunningForListTowns;
+
+        public bool IsRunningForListTowns
+        {
+            get => _IsRunningForListTowns;
+            set
+            {
+
+                if (_IsRunningForButton == value)
+                    return;
+
+                _IsRunningForButton = value;
+                OnPropertyChanged();
+
             }
         }
 
@@ -69,7 +129,36 @@ namespace WeatherApp.ViewsModels
             
             FavoritesTownList = new ObservableCollection<Towns>();
             TownsList = new ObservableCollection<Towns>();
+            SearchCommand = new Command(async () =>
+            {
+                if (IsBusy)
+                    return;
+                try
+                {
+                    IsBusy = true;
+                    IsRunningForButton = true;
+                      RestDataService restData = new RestDataService();
+                    Towns towns = await restData.AddTown(SearchInfo);
+                    if(towns.id_town != 0)
+                    {
+                        await Shell.Current.DisplayAlert("!!", "Город найден", "Ок");
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert("Ошибка", "Город не найден", "Ок");
+                    }
+                }
+                catch(Exception e)
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+                }
+                finally
+                {
+                    IsRunningForButton = false;
 
+                    IsBusy = false;
+                }
+            });
             AddOrRemoveFavorites = new Command(async (object? args) =>
             {
                 if (args is Towns towns)
@@ -78,7 +167,7 @@ namespace WeatherApp.ViewsModels
                         return;
                     try
                     {
-                        IsBusy = true;
+                        IsBusy = true; IsRunningForListTowns = true;
                         RestDataService restdata = new RestDataService();
                         FavoriteTowns favoriteTowns = new FavoriteTowns();
                         favoriteTowns.townId = towns.id_town;
@@ -125,6 +214,8 @@ namespace WeatherApp.ViewsModels
                     }
                     finally
                     {
+                        IsRunningForListTowns = false;
+
                         IsBusy = false;
                     }
                    

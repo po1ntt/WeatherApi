@@ -24,17 +24,19 @@
     <ContentPage.Resources>
        
     </ContentPage.Resources>
-    <VerticalStackLayout Padding="10">
+    <ScrollView>
+        <VerticalStackLayout Padding="10">
         <StackLayout Margin="10">
+            <ActivityIndicator IsRunning="{Binding IsRunningForButton}" Color="#ff087b" WidthRequest="25" HeightRequest="25"></ActivityIndicator>
             <Grid Margin="0,0,0,10">
-                <uranium:TextField  Text="{Binding SearchInfo}" Icon="{FontImage Color=Black, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,0" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
+                <uranium:TextField  Text="{Binding SearchInfo}" Icon="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,0" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
 
 
                 </uranium:TextField>
             </Grid>
 
 
-            <Button  Visual="Default" TextColor="Black" BackgroundColor="#ff087b" CornerRadius="5"  Text="Поиск" Padding="10" >
+            <Button Command="{Binding SearchCommand}" IsEnabled="{Binding IsEnabled}"  Visual="Default" TextColor="White" FontSize="20" BackgroundColor="#ff087b" CornerRadius="5"  Text="Поиск" Padding="10" >
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="CommonStates">
                         <VisualState x:Name="Normal" />
@@ -59,7 +61,7 @@
                     </Image>
 
                     <Label TextColor="White" Margin="10,0,0,0" FontSize="20" FontAttributes="Bold" Text="Избранные"></Label>
-                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsRunningForListTowns}" IsVisible="{Binding IsRunningForListTowns}"></ActivityIndicator>
 
                 </StackLayout>
                     <ListView x:Name="FavList"  SelectionMode="Single"  ItemsSource="{Binding FavoritesTownList}">
@@ -119,7 +121,7 @@
                     </Image>
 
                     <Label TextColor="White" Margin="10,0,0,0" FontSize="20" FontAttributes="Bold" Text="Лист городов" ></Label>
-                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                    <ActivityIndicator Margin="10,0,0,0" Color="Red" HeightRequest="15" WidthRequest="15" IsRunning="{Binding IsRunningForListTowns}" IsVisible="{Binding IsRunningForListTowns}"></ActivityIndicator>
 
                 </StackLayout>
                     <ListView ItemsSource="{Binding TownsList}" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Never" x:Name="townlist"  >
@@ -184,4 +186,5 @@
             </VisualStateManager.VisualStateGroups>
         </Button>
     </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

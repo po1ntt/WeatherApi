@@ -4,13 +4,21 @@
              x:Class="WeatherApp.Views.TownInfoPage"
              Title="NameTown"
              Background="#111"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
              >
-    
-    <VerticalStackLayout Padding="10">
+    <ContentPage.BindingContext>
+        <vm:TownInfoVm></vm:TownInfoVm>
+    </ContentPage.BindingContext>
+    <ScrollView>
+
+        <VerticalStackLayout Padding="10">
         <Label TextColor="White" Text="По дням:" FontSize="23" FontAttributes="Bold"></Label>
         <ListView HeightRequest="100"></ListView>
-        <Grid  BackgroundColor="Grey" Margin="0,0,0,20" HeightRequest="300">
-            <Label  TextColor="White">diagram</Label>
+        <Grid  Margin="0,0,0,20" HeightRequest="300">
+                <lvc:CartesianChart LegendTextSize="18" YAxes="{Binding XYxes}"  Background="white" Series="{Binding Series}" ZoomMode="X"  XAxes="{Binding XAxes}">
+                   
+                </lvc:CartesianChart>
         </Grid>
         <Grid BackgroundColor="Grey" HeightRequest="150" Margin="0,0,0,20">
             <Label TextColor="White">diagram</Label>
@@ -35,4 +43,6 @@
 
         </Grid>
     </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

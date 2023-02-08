@@ -4,7 +4,7 @@ using InputKit.Handlers;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
 using UraniumUI;
-
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using WeatherApp.Service;
 using WeatherApp.Views;
 
@@ -21,6 +21,7 @@ namespace WeatherApp
                 .UseUraniumUIMaterial()
                 .UseMauiCommunityToolkit()
                 .UseUraniumUI()
+                .UseSkiaSharp(true)
                 .UseMauiCommunityToolkitCore()
                 .UseMauiCompatibility()
                 .ConfigureMauiHandlers(handlers =>{
@@ -30,6 +31,8 @@ namespace WeatherApp
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("20952.ttf", "Serif");
+
                     fonts.AddFontAwesomeIconFonts();
 
                 });

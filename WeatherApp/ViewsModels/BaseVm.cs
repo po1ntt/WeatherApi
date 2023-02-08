@@ -25,6 +25,7 @@ namespace WeatherApp.ViewsModels
                 
             }
         }
+
        
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
