@@ -6,6 +6,8 @@ using UraniumUI;
 using Syncfusion.Maui.Core.Hosting;
 using WeatherApp.Service;
 using WeatherApp.Views;
+using LiveChartsCore.SkiaSharpView.Maui;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace WeatherApp
 {
@@ -20,7 +22,7 @@ namespace WeatherApp
                 .UseUraniumUIMaterial()
                 .UseUraniumUI()
                 .ConfigureSyncfusionCore()
-
+                .UseSkiaSharp(true)
                 .UseMauiCompatibility()
                 .ConfigureMauiHandlers(handlers =>{
                     handlers.AddInputKitHandlers();

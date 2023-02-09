@@ -4,7 +4,7 @@
              x:Class="WeatherApp.Views.TownInfoPage"
              Title="Погода"
              Background="#111"
-              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+              xmlns:chart="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
              >
 
@@ -13,8 +13,8 @@
         <VerticalStackLayout Padding="10">
         <Label HorizontalOptions="Center" TextColor="White" FontSize="30"  VerticalOptions="Start" Text="{Binding TownInfo.name}"></Label>
             <Label HorizontalOptions="Center" TextColor="White" FontSize="30"  VerticalOptions="Start" Text="{Binding DailyData.temperature_2m_max}"></Label>
-            <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding DailyData.dateDay, StringFormat='{0}{dd.MM.yy}'}"></Label>
-            <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding WeatherInfo.dateDay, StringFormat='{0}{H:mm}'}"></Label>
+            <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding DailyData.dateDay, StringFormat='{0:dd.MM.yy}'}"></Label>
+            <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding DailyData.dateDay, StringFormat='Время обновления: {0:H:mm}'}"></Label>
 
 
             <Label TextColor="White" Text="По дням:" FontSize="23" FontAttributes="Bold"></Label>
@@ -28,9 +28,9 @@
                                     <RowDefinition Height="25"></RowDefinition>
                                     <RowDefinition Height="25"></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Label Grid.Row="0" FontSize="20" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0}{dd.MM.yy}'}"></Label>
-                                <Label Grid.Row="1" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0}{dddd}'}"></Label>
-                                <Label Grid.Row="2" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding temperatyre_2m_min}"></Label>
+                                <Label Grid.Row="0" FontSize="20" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0:dd.MM.yy}'}"></Label>
+                                <Label Grid.Row="1" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0:dddd}'}"></Label>
+                                <Label Grid.Row="2" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding temperature_2m_min}"></Label>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup Name="CommonStates">
                                         <VisualState Name="Normal" />
@@ -49,27 +49,11 @@
             <Line HeightRequest="2" Margin="0,0,0,10" Background="#373737"/>
 
 
-        <Frame CornerRadius="5"  BorderColor="#ab2446" Padding="5"  Margin="0,0,0,20" HeightRequest="300">
-                <chart:SfCartesianChart >
-                    <chart:SfCartesianChart.XAxes>
-                        <chart:CategoryAxis>
-                            <chart:CategoryAxis.Title>
-                                <chart:ChartAxisTitle TextColor="Black" Text="Даты" />
-                            </chart:CategoryAxis.Title>
-                        </chart:CategoryAxis>
-                    </chart:SfCartesianChart.XAxes>
-                    <chart:SfCartesianChart.YAxes>
-                        <chart:NumericalAxis>
-                            <chart:NumericalAxis.Title>
-                                <chart:ChartAxisTitle TextColor="Black" Text="Температура(С)" />
-                            </chart:NumericalAxis.Title>
-                        </chart:NumericalAxis>
-                    </chart:SfCartesianChart.YAxes>
-                    <chart:LineSeries Fill="#70141be0" ItemsSource="{Binding DailyData.temperatyre}" 
-                        XBindingPath="{Binding time, StringFormat='{0}{H:mm}'}" 
-                        YBindingPath="temperatyre_2m" />
-                </chart:SfCartesianChart>
-        </Frame>
+            <Grid  Padding="5"  Margin="0,0,0,20" HeightRequest="300">
+                <chart:CartesianChart Background="white" Series="{Binding Series}">
+                    
+                </chart:CartesianChart>
+            </Grid>
             <Line HeightRequest="2" Margin="0,0,0,10" Background="#373737"/>
             
         <Grid BackgroundColor="Grey" HeightRequest="150" Margin="0,0,0,20">
