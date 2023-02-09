@@ -14,8 +14,8 @@ namespace WeatherApp.Models
         }
         public int Id { get; set; }
         public DateTime dateDay { get; set; }
-        public double temperature_2m_max { get; set; }
-        public double temperature_2m_min { get; set; }
+        public string temperature_2m_max { get; set; }
+        public string temperature_2m_min { get; set; }
         public DateTime sunrise { get; set; }
         public DateTime sunset { get; set; }
        

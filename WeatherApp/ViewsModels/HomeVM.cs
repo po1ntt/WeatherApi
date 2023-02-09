@@ -145,7 +145,7 @@ namespace WeatherApp.ViewsModels
                         Weather weather = await restData.GetWeatherInfoByTown(towns.id_town);
                         if (weather != null)
                         {
-                            await Task.Delay(1000);
+                           
                             await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
                         }
                         else
@@ -242,6 +242,7 @@ namespace WeatherApp.ViewsModels
                 return;
             try
             {
+           
                 RestDataService restData = new RestDataService();
                 IsBusy = true;
                 List<Towns> listfav = await restData.GetFavTowns(AuthorizationVM.UserInfo);

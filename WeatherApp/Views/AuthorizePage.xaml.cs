@@ -7,5 +7,7 @@ public partial class AuthorizePage : ContentPage
 	public AuthorizePage()
 	{
 		InitializeComponent();
+		string g = 3.7.ToString();
+      
 	}
 }

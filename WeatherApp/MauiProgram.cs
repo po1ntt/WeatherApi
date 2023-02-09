@@ -3,7 +3,6 @@ using InputKit.Handlers;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
 using UraniumUI;
-using Syncfusion.Maui.Core.Hosting;
 using WeatherApp.Service;
 using WeatherApp.Views;
 using LiveChartsCore.SkiaSharpView.Maui;
@@ -21,7 +20,6 @@ namespace WeatherApp
                 .UseMauiApp<App>()
                 .UseUraniumUIMaterial()
                 .UseUraniumUI()
-                .ConfigureSyncfusionCore()
                 .UseSkiaSharp(true)
                 .UseMauiCompatibility()
                 .ConfigureMauiHandlers(handlers =>{
@@ -36,7 +34,7 @@ namespace WeatherApp
                     fonts.AddFontAwesomeIconFonts();
 
                 });
-
+            builder.Services.AddSingleton<RestDataService>();
             return builder.Build();
         }
     }

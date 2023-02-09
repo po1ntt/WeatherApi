@@ -8,7 +8,7 @@
              BackgroundColor="#111"
              xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
              xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
-                          xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
+             xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
 
              >
     <ContentPage.BindingContext>
@@ -38,32 +38,10 @@
                         </uranium:TextField.Validations>
                     </uranium:TextField>
                     <Button Command="{Binding AutorizeUser}" Opacity="1" CornerRadius="10" TextColor="White" StyleClass="FilledButton" BackgroundColor="#ab2446"   Text="Войти" Margin="0,0,0,10">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Property="Opacity"
-                                Value="0.8" />
-
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                        
                     </Button>
                     <Button Command="{Binding NavToReg}" CornerRadius="10" StyleClass="FilledButton" BackgroundColor="#141be0" Margin="0,0,0,10" Text="Регистрация" TextColor="White" >
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Property="Opacity"
-                                Value="0.8" />
-
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                        
                     </Button>
                     <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="White"></ActivityIndicator>
             </VerticalStackLayout>

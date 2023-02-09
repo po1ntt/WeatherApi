@@ -29,17 +29,17 @@ namespace WeatherApp.Service
                 dateDayList = dateDayList.Skip(1).ToArray();
                 daily.sunset = Convert.ToDateTime(sunset[0]);
                 sunset = sunset.Skip(1).ToArray();
-                daily.sunrise = Convert.ToDateTime(sunset[0]);
+                daily.sunrise = Convert.ToDateTime(sunrise[0]);
                 sunrise = sunrise.Skip(1).ToArray();
-                daily.temperature_2m_max = Convert.ToDouble(temperatyre_max[0]);
+                daily.temperature_2m_max = temperatyre_max[0];
                 temperatyre_max = temperatyre_max.Skip(1).ToArray();
-                daily.temperature_2m_min = Convert.ToDouble(temperatyre_min[0]);
+                daily.temperature_2m_min = temperatyre_min[0];
                 temperatyre_min = temperatyre_min.Skip(1).ToArray();
                 for(int u = 0; u <= 23; u++)
                 {
-                    daily.temperatyre.Add(new Temperatyre { 
+                    daily.temperatyre.Add(new Temperatyre {
                         time = Convert.ToDateTime(time[u]),
-                        temperature_2m = Convert.ToDouble(temperatyre_2m[u])
+                        temperature_2m = Convert.ToDouble(temperatyre_2m[u].Replace(',', '.'))
 
                     });
                    

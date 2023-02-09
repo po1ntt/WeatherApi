@@ -9,13 +9,48 @@ using WeatherApp.Models;
 
 namespace WeatherApp.ViewsModels
 {
-    public partial class TownInfoVm : BaseVm
+    public class TownInfoVm : BaseVm
     {
-        private readonly Task initTask;
       
-        public ObservableCollection<ISeries> Series;
+        public ISeries[] Series { get; set; }
+        public Axis[] XAxes { get; set; } =
+        {
+        new Axis
+        {
+            Labeler = value => new DateTime((long) value).ToString("H:mm"),
+            LabelsRotation = 0,
+            TextSize= 30,
+            NameTextSize= 30,
+            Name = "Время",
+            
+            // when using a date time type, let the library know your unit 
+            UnitWidth = TimeSpan.FromHours(1).Ticks, 
 
-        public ObservableCollection<ObservableValue> Temperatyre_2m { get; set; }
+            // if the difference between our points is in hours then we would:
+            // UnitWidth = TimeSpan.FromHours(1).Ticks,
+
+            // since all the months and years have a different number of days
+            // we can use the average, it would not cause any visible error in the user interface
+            // Months: TimeSpan.FromDays(30.4375).Ticks
+            // Years: TimeSpan.FromDays(365.25).Ticks
+
+            // The MinStep property forces the separator to be greater than 1 day.
+            MinStep = TimeSpan.FromHours(1).Ticks
+        }
+    };
+        public Axis[] YAxes { get; set; } =
+       {
+        new Axis
+        {
+           
+            TextSize= 30,
+            NameTextSize= 30,
+            Name = "Температуры с",
+            // when using a date time type, let the library know your unit 
+            
+        }
+    };
+        public ObservableCollection<DateTimePoint> Temperatyre_2m { get; set; }
         private ObservableCollection<Daily> _ListDailyData;
 
         public ObservableCollection<Daily> ListDailyData
@@ -37,10 +72,9 @@ namespace WeatherApp.ViewsModels
             get => _DailyData;
             set
             {
-               
                     _DailyData = value;
                     OnPropertyChanged(); 
-               
+       
             }
         }
         public Towns TownInfo { get; set; }
@@ -52,10 +86,9 @@ namespace WeatherApp.ViewsModels
             ListDailyData = new ObservableCollection<Daily>();
             TownInfo = town;
             WeatherInfo = weather;
-            Temperatyre_2m = new ObservableCollection<ObservableValue>();
+            Temperatyre_2m = new ObservableCollection<DateTimePoint>();
             Service.WeatherConvertToDaily weatherConvertToDaily = new Service.WeatherConvertToDaily();
-            List<Daily> data = new List<Daily>();
-            data = weatherConvertToDaily.ReturnDaily(weather);
+            List<Daily> data = weatherConvertToDaily.ReturnDaily(weather);
             foreach (var item in data)
             {
                 ListDailyData.Add(item);
@@ -63,16 +96,20 @@ namespace WeatherApp.ViewsModels
             DailyData = ListDailyData.FirstOrDefault();
             foreach(var item in DailyData.temperatyre)
             {
-                Temperatyre_2m.Add(new ObservableValue
+                Temperatyre_2m.Add(new DateTimePoint
                 {
-                    Value = item.temperature_2m,
+                    DateTime = item.time,
+                    Value = item.temperature_2m
+                    
 
                 });
             }
-            Series = new ObservableCollection<ISeries>
+            Series = new ISeries[]
                 {
-                 new LineSeries<ObservableValue>
+                 new LineSeries<DateTimePoint>
                 {
+                  TooltipLabelFormatter = (chartPoint) =>
+                $"{new DateTime((long) chartPoint.SecondaryValue):h:mm}: {chartPoint.PrimaryValue}",
                 Values = Temperatyre_2m,
                 Fill = null
                 }
@@ -80,31 +117,7 @@ namespace WeatherApp.ViewsModels
 
         }
 
-        private async Task InitAsync(Weather weather)
-        {
-            if (IsBusy)
-                return;
-            try
-            {
-                IsBusy = true;
-               
-                
-
-
-
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("ex", ex.Message, "ok");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-
-           
-        }
-
+        
         }
        
 

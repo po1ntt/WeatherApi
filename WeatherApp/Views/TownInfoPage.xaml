@@ -6,13 +6,14 @@
              Background="#111"
               xmlns:chart="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              xmlns:vm="clr-namespace:WeatherApp.ViewsModels"
-             >
+              xmlns:lvcore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore">
+             
 
         <ScrollView>
 
         <VerticalStackLayout Padding="10">
         <Label HorizontalOptions="Center" TextColor="White" FontSize="30"  VerticalOptions="Start" Text="{Binding TownInfo.name}"></Label>
-            <Label HorizontalOptions="Center" TextColor="White" FontSize="30"  VerticalOptions="Start" Text="{Binding DailyData.temperature_2m_max}"></Label>
+            <Label HorizontalOptions="Center" TextColor="White" FontSize="30"  VerticalOptions="Start" Text="{Binding DailyData.temperature_2m_min}"></Label>
             <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding DailyData.dateDay, StringFormat='{0:dd.MM.yy}'}"></Label>
             <Label HorizontalOptions="Center" TextColor="White" FontSize="25"  VerticalOptions="Start" Text="{Binding DailyData.dateDay, StringFormat='Время обновления: {0:H:mm}'}"></Label>
 
@@ -30,7 +31,7 @@
                                 </Grid.RowDefinitions>
                                 <Label Grid.Row="0" FontSize="20" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0:dd.MM.yy}'}"></Label>
                                 <Label Grid.Row="1" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding dateDay, StringFormat='{0:dddd}'}"></Label>
-                                <Label Grid.Row="2" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding temperature_2m_min}"></Label>
+                                <Label FontFamily="OpenSansSemibold" Grid.Row="2" FontSize="18" TextColor="White" HorizontalOptions="StartAndExpand" VerticalOptions="Center" Text="{Binding temperature_2m_min}"></Label>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup Name="CommonStates">
                                         <VisualState Name="Normal" />
@@ -50,32 +51,24 @@
 
 
             <Grid  Padding="5"  Margin="0,0,0,20" HeightRequest="300">
-                <chart:CartesianChart Background="white" Series="{Binding Series}">
+                <chart:CartesianChart ZoomMode="X" AnimationsSpeed="00:00:00.500" EasingFunction="{Binding Source={x:Static lvcore:EasingFunctions.BounceOut}}" YAxes="{Binding YAxes}" Background="white" Series="{Binding Series}" XAxes="{Binding XAxes}">
                     
                 </chart:CartesianChart>
             </Grid>
             <Line HeightRequest="2" Margin="0,0,0,10" Background="#373737"/>
-            
-        <Grid BackgroundColor="Grey" HeightRequest="150" Margin="0,0,0,20">
-                <Label TextColor="White">diagram</Label>
-        </Grid>
-         <Line HeightRequest="2" Margin="0,0,0,10" Background="#373737"/>
-
-         <Grid BackgroundColor="Gray" Padding="15">
+            <Grid BackgroundColor="Black" Padding="15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-
-
-            </Grid.ColumnDefinitions>
-            <StackLayout>
-                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Закат: 8.43"></Label>
-                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Восход: 8.43"></Label>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            <StackLayout Grid.Column="0">
+                    <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="{Binding DailyData.sunset, StringFormat='Закат: {0:t}'}"></Label>
+                    <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="{Binding DailyData.sunrise, StringFormat='Восход: {0:t}'}"></Label>
             </StackLayout>
           
-            <StackLayout Grid.Column="2">
-                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Max: 8.43 C"></Label>
-                <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="Min: 8.43 C"></Label>
+            <StackLayout Grid.Column="1">
+                    <Label TextColor="White" FontAttributes="Bold" FontSize="23"  Text="{Binding DailyData.temperature_2m_min, StringFormat='Min: {0}'}"></Label>
+                    <Label TextColor="White" FontAttributes="Bold" FontSize="23" Text="{Binding DailyData.temperature_2m_max, StringFormat='Max: {0}'}"></Label>
             </StackLayout>
 
 
