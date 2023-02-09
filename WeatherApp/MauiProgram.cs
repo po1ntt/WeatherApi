@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Core;
+﻿
 using InputKit.Handlers;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
 using UraniumUI;
-using SkiaSharp.Views.Maui.Controls.Hosting;
+using Syncfusion.Maui.Core.Hosting;
 using WeatherApp.Service;
 using WeatherApp.Views;
 
@@ -19,10 +18,9 @@ namespace WeatherApp
             builder
                 .UseMauiApp<App>()
                 .UseUraniumUIMaterial()
-                .UseMauiCommunityToolkit()
                 .UseUraniumUI()
-                .UseSkiaSharp(true)
-                .UseMauiCommunityToolkitCore()
+                .ConfigureSyncfusionCore()
+
                 .UseMauiCompatibility()
                 .ConfigureMauiHandlers(handlers =>{
                     handlers.AddInputKitHandlers();

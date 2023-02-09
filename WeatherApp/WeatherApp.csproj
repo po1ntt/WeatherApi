@@ -55,11 +55,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
-	  <PackageReference Include="LiveChartsCore.SkiaSharpView.Maui" Version="2.0.0-beta.701" />
+	  <PackageReference Include="Syncfusion.Licensing" Version="20.4.0.49" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="20.4.49" />
 	  <PackageReference Include="UraniumUI" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.3.0" />
-	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Material" Version="2.3.0" />
 	  <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.3.0" />
 	</ItemGroup>

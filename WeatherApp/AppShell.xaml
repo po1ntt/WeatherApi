@@ -8,10 +8,7 @@
     Shell.TitleColor="White"
     >
 
-    <ShellContent
-        Title="authorize"
-        ContentTemplate="{DataTemplate local:TownInfoPage}"
-        Route="AuthorizePage" />
+
     <ShellContent
         Title="authorize"
         ContentTemplate="{DataTemplate local:AuthorizePage}"

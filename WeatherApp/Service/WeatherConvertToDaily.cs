@@ -21,9 +21,9 @@ namespace WeatherApp.Service
             var sunrise = weather.sunrise.Split(' ');
             var time = weather.time.Split(' ');
             var relativehimidity_2m = weather.relativehimidity_2m.Split(' ');
-            for( int i = 1 ; i == 7 ; i++  )
+            for( int i = 1 ; i <= 7; i++  )
             {
-                Daily daily = null;
+                Daily daily = new Daily();
                 daily.Id = i;
                 daily.dateDay = Convert.ToDateTime(dateDayList[0]);
                 dateDayList = dateDayList.Skip(1).ToArray();
@@ -35,23 +35,17 @@ namespace WeatherApp.Service
                 temperatyre_max = temperatyre_max.Skip(1).ToArray();
                 daily.temperature_2m_min = Convert.ToDouble(temperatyre_min[0]);
                 temperatyre_min = temperatyre_min.Skip(1).ToArray();
-                for (int u = 0; u == 23; u++)
+                for(int u = 0; u <= 23; u++)
                 {
-                    double item = Convert.ToDouble(temperatyre_2m[u]);
-                    daily.temperature_2m.Add(item);
-                }
-                temperatyre_2m = temperatyre_2m.Skip(24).ToArray();
-                for (int u = 0; u == 23; u++)
-                {
-                    DateTime item = Convert.ToDateTime(time[u]);
-                    daily.times.Add(item);
+                    daily.temperatyre.Add(new Temperatyre { 
+                        time = Convert.ToDateTime(time[u]),
+                        temperature_2m = Convert.ToDouble(temperatyre_2m[u])
+
+                    });
+                   
                 }
                 time = time.Skip(24).ToArray();
-                for (int u = 0; u == 23; u++)
-                {
-                    int item = Convert.ToInt32(relativehimidity_2m[u]);
-                    daily.relativehumidity_2m.Add(item);
-                }
+                temperatyre_2m = temperatyre_2m.Skip(24).ToArray();
                 relativehimidity_2m = relativehimidity_2m.Skip(24).ToArray();
                 listDaily.Add(daily);
 

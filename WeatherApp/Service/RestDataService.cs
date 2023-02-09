@@ -215,9 +215,34 @@ namespace WeatherApp.Service
             return result;
         }
 
-        public async Task<Towns> GetWeatherInfoByTown(int id_town)
+        public async Task<Weather> GetWeatherInfoByTown(int id_town)
         {
-            throw new NotImplementedException();
+            Weather weather = new Weather();
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                Console.WriteLine("504");
+                return weather;
+            }
+            try
+            {
+
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Weather/ReturnWeatherByTown?id_town={id_town}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    weather = JsonSerializer.Deserialize<Weather>(data);
+                }
+                else
+                {
+                    Console.WriteLine("202");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return weather;
+            }
+            return weather;
         }
 
         public async Task<bool> RegistrationUser(Users users)

@@ -51,7 +51,7 @@
                 </VisualStateManager.VisualStateGroups>
             </Button>
         </StackLayout>
-        <Frame CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent" BackgroundColor="#373737">
+        <Frame CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent" BackgroundColor="#80373737">
             <StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image WidthRequest="25" Margin="10,0,0,0">
@@ -110,7 +110,7 @@
                     </ListView>
             </StackLayout>
         </Frame>
-        <Frame  CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent"  BackgroundColor="#373737">
+        <Frame  CornerRadius="5" HeightRequest="250" Margin="10" BorderColor="Transparent"  BackgroundColor="#80373737">
             <StackLayout>
                 <StackLayout Orientation="Horizontal" Margin="10,0,0,0">
                     <Image WidthRequest="25">

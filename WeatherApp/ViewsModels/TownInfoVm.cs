@@ -1,63 +1,88 @@
-﻿using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
+﻿
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using WeatherApp.Models;
 
 namespace WeatherApp.ViewsModels
 {
     public partial class TownInfoVm : BaseVm
     {
-        public ISeries[] Series { get; set; } =
-     {
-                new LineSeries<DateTimePoint>
-                {
-                    TooltipLabelFormatter = (chartPoint) =>
-                        $"{new DateTime((long) chartPoint.SecondaryValue):H:mm}: {chartPoint.PrimaryValue}",
-                    Values = new ObservableCollection<DateTimePoint>
-                    {
-                        new DateTimePoint(new DateTime(2021, 1, 1, 0, 0, 0), 3.5),
-                        new DateTimePoint(new DateTime(2021, 1, 1, 1, 0 ,0), 2.1),
-                        new DateTimePoint(new DateTime(2021, 1, 1, 2, 0 ,0), 1.4),
-                        new DateTimePoint(new DateTime(2021, 1, 1, 3 ,0 ,0), 9.1),
-                         new DateTimePoint(new DateTime(2021, 1, 1, 4 ,0 ,0), 9.1),
-                          new DateTimePoint(new DateTime(2021, 1, 1, 5 ,0 ,0), 5.3),
-                           new DateTimePoint(new DateTime(2021, 1, 1, 6 ,0 ,0), 3.2),
-                            new DateTimePoint(new DateTime(2021, 1, 1, 7 ,0 ,0), 6.4),
-                             new DateTimePoint(new DateTime(2021, 1, 1, 8 ,0 ,0), 12.3),
+        private readonly Task initTask;
 
-                    },
-                    Name="Температура С"
+        private ObservableCollection<Daily> _ListDailyData;
 
-
-
-                }
-            };
-        public TownInfoVm()
+        public ObservableCollection<Daily> ListDailyData
         {
+            get => _ListDailyData;
+            set
+            {
+                if (_ListDailyData != value)
+                {
+                    _ListDailyData = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Daily _DailyData;
+
+        public Daily DailyData
+        {
+            get => _DailyData;
+            set
+            {
+                if (_DailyData != value)
+                {
+                    _DailyData = value;
+                    OnPropertyChanged(); 
+                } 
+            }
+        }
+        public Towns TownInfo { get; set; }
+        public Weather WeatherInfo { get; set; }
+
+
+        public TownInfoVm(Weather weather, Towns town)
+        {
+            ListDailyData = new ObservableCollection<Daily>();
+            TownInfo = town;
+            WeatherInfo = weather;
+           
+            this.initTask = InitAsync(weather);
+            DailyData = ListDailyData.FirstOrDefault();
+            
+        }
+
+        private async Task InitAsync(Weather weather)
+        {
+            if (IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                Service.WeatherConvertToDaily weatherConvertToDaily = new Service.WeatherConvertToDaily();
+                List<Daily> data = new List<Daily>();
+                data = weatherConvertToDaily.ReturnDaily(weather);
+                foreach(var item in data)
+                {
+                    ListDailyData.Add(item);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("ex", ex.Message, "ok");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
+
 
         }
-        public Axis[] XAxes { get; set; } =
-        {
-         new Axis
-            {
-                    Labeler = value => new DateTime((long) value).ToString("H:mm"),
-                    LabelsRotation = 0,
 
-                    // when using a date time type, let the library know your unit 
-                    UnitWidth = TimeSpan.FromHours(1).Ticks,
-                    TextSize = 24,
-                    MinStep = TimeSpan.FromHours(1).Ticks
-                }
-            };
-        public Axis[] XYxes { get; set; } =
-            {
-                new Axis
-                {
-                    LabelsRotation = 0,
 
-                    TextSize = 24,
-                }
-            };
     }
 }
+
 

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WeatherApp.Models;
 using WeatherApp.Service;
+using WeatherApp.Views;
 
 namespace WeatherApp.ViewsModels
 {
@@ -141,7 +142,18 @@ namespace WeatherApp.ViewsModels
                     Towns towns = await restData.AddTown(SearchInfo);
                     if(towns.id_town != 0)
                     {
-                        await Shell.Current.DisplayAlert("!!", "Город найден", "Ок");
+                        Weather weather = await restData.GetWeatherInfoByTown(towns.id_town);
+                        if (weather != null)
+                        {
+                            await Task.Delay(1000);
+                            await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
+                        }
+                        else
+                        {
+                            await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
+
+                        }
+
                     }
                     else
                     {

@@ -11,7 +11,8 @@
     <Grid>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="300">
             <inputkit:FormView Margin="0,0,0,10" Spacing="10" Background="transparent" HorizontalOptions="Center" VerticalOptions="Center">
-
+                
+             
                 <uranium:TextField Text="{Binding Login}" CornerRadius="5" Icon="{x:FontImage FontFamily=FASolid, Color=White, Glyph={x:Static fa:Solid.User}}" BorderColor="White" Margin="0,10,0,10"  TitleColor="White" AccentColor="LightGreen" TextColor="White"  Title="Логин" >
                     <uranium:TextField.Validations>
                         <validation:MinLengthValidation MinLength="5"></validation:MinLengthValidation>
