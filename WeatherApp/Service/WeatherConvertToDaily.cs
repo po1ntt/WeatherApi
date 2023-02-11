@@ -14,6 +14,7 @@ namespace WeatherApp.Service
             List<Daily> listDaily = new List<Daily>();
 
             var dateDayList = weather.dateDay.Split(' ');
+            int countday = dateDayList.Count();
             var sunset = weather.sunset.Split(' ');
             var temperatyre_2m = weather.temperatyre2M.Split(' ');
             var temperatyre_min = weather.temperatyre_2m_min.Split(' ');
@@ -21,7 +22,7 @@ namespace WeatherApp.Service
             var sunrise = weather.sunrise.Split(' ');
             var time = weather.time.Split(' ');
             var relativehimidity_2m = weather.relativehimidity_2m.Split(' ');
-            for( int i = 1 ; i <= 7; i++  )
+            for( int i = 1 ; i <= countday ; i++  )
             {
                 Daily daily = new Daily();
                 daily.Id = i;

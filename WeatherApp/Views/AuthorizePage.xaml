@@ -44,7 +44,8 @@
                         
                     </Button>
                     <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="White"></ActivityIndicator>
-            </VerticalStackLayout>
+                   
+                </VerticalStackLayout>
             </Frame>
         </StackLayout>
 

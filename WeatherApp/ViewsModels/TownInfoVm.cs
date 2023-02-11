@@ -3,16 +3,32 @@ using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using Microsoft.Maui.Graphics;
+using SkiaSharp;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using WeatherApp.Models;
+using WeatherApp.Service;
 
 namespace WeatherApp.ViewsModels
 {
     public class TownInfoVm : BaseVm
     {
-      
+         public Command SelectionChanged { get; set; }
         public ISeries[] Series { get; set; }
+
+        private System.Drawing.Color _ColorForTown;
+
+        public System.Drawing.Color ColorForTown
+        {
+            get => _ColorForTown;
+            set { _ColorForTown = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Axis[] XAxes { get; set; } =
         {
         new Axis
@@ -23,18 +39,9 @@ namespace WeatherApp.ViewsModels
             NameTextSize= 30,
             Name = "Время",
             
-            // when using a date time type, let the library know your unit 
             UnitWidth = TimeSpan.FromHours(1).Ticks, 
 
-            // if the difference between our points is in hours then we would:
-            // UnitWidth = TimeSpan.FromHours(1).Ticks,
-
-            // since all the months and years have a different number of days
-            // we can use the average, it would not cause any visible error in the user interface
-            // Months: TimeSpan.FromDays(30.4375).Ticks
-            // Years: TimeSpan.FromDays(365.25).Ticks
-
-            // The MinStep property forces the separator to be greater than 1 day.
+      
             MinStep = TimeSpan.FromHours(1).Ticks
         }
     };
@@ -50,7 +57,16 @@ namespace WeatherApp.ViewsModels
             
         }
     };
-        public ObservableCollection<DateTimePoint> Temperatyre_2m { get; set; }
+        private ObservableCollection<DateTimePoint> _Temperatyre_2m;
+
+        public ObservableCollection<DateTimePoint> Temperatyre_2m
+        {
+            get => _Temperatyre_2m;
+            set { _Temperatyre_2m = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<Daily> _ListDailyData;
 
         public ObservableCollection<Daily> ListDailyData
@@ -81,26 +97,54 @@ namespace WeatherApp.ViewsModels
         public Weather WeatherInfo { get; set; }
 
 
+        public RestDataService _RestDataService;
+
         public TownInfoVm(Weather weather, Towns town)
         {
+            _RestDataService = new RestDataService();
+
             ListDailyData = new ObservableCollection<Daily>();
-            TownInfo = town;
-            WeatherInfo = weather;
+            TownInfo = new Towns();
+            WeatherInfo = new Weather();
             Temperatyre_2m = new ObservableCollection<DateTimePoint>();
+            SelectionChanged = new Command( () => ChangeTemperatyre());
+
+            initAsync(weather, town);
+           
+
+        }
+        public void ChangeTemperatyre()
+        {
+            Temperatyre_2m.Clear();
+            foreach (var item in DailyData.temperatyre)
+            {
+                Temperatyre_2m.Add(new DateTimePoint
+                {
+                    DateTime = item.time,
+                    Value = item.temperature_2m
+                });
+            }
+        }
+        public  void initAsync(Weather weather, Towns towns)
+        {
+            TownInfo = towns;
+            WeatherInfo = weather;
             Service.WeatherConvertToDaily weatherConvertToDaily = new Service.WeatherConvertToDaily();
+
+          
             List<Daily> data = weatherConvertToDaily.ReturnDaily(weather);
             foreach (var item in data)
             {
                 ListDailyData.Add(item);
             }
             DailyData = ListDailyData.FirstOrDefault();
-            foreach(var item in DailyData.temperatyre)
+            foreach (var item in DailyData.temperatyre)
             {
                 Temperatyre_2m.Add(new DateTimePoint
                 {
                     DateTime = item.time,
                     Value = item.temperature_2m
-                    
+
 
                 });
             }
@@ -108,17 +152,60 @@ namespace WeatherApp.ViewsModels
                 {
                  new LineSeries<DateTimePoint>
                 {
+
                   TooltipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long) chartPoint.SecondaryValue):h:mm}: {chartPoint.PrimaryValue}",
+                  DataLabelsSize= 24,
+                  GeometrySize= 10,
                 Values = Temperatyre_2m,
-                Fill = null
+                Fill = new SolidColorPaint(SKColors.Blue.WithAlpha(40))
+
                 }
-                };
+               };
+        }
+        public async Task AddOrDeleteFavorite(Towns towns)
+        {
+            
+                if (IsBusy)
+                    return;
+                try
+                {
+                    IsBusy = true; 
+                    FavoriteTowns favoriteTowns = new FavoriteTowns();
+                    favoriteTowns.townId = towns.id_town;
+                    HomeVM homeVM = new HomeVM();
+                    favoriteTowns.userId = Preferences.Default.Get("id_user", 0);
+                    var result = await _RestDataService.AddFavoriteTown(favoriteTowns);
+                    if(result == "plus")
+                    {
+                         ColorForTown = ColorTranslator.FromHtml("#141be0");
+                        homeVM.FavoritesTownList.Add(towns);
+                        homeVM.TownsList.Remove(towns);
+                    }
+                    else
+                    {
+                        ColorForTown = ColorTranslator.FromHtml("#373737");
+                        homeVM.FavoritesTownList.Remove(towns);
+                        homeVM.TownsList.Add(towns);
 
+
+                    }
+               
+                }
+                catch (Exception e)
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+
+            
         }
 
-        
-        }
+
+    }
        
 
 }

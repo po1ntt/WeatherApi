@@ -34,7 +34,7 @@ namespace WeatherApp
                     fonts.AddFontAwesomeIconFonts();
 
                 });
-            builder.Services.AddSingleton<RestDataService>();
+            builder.Services.AddSingleton<IRestDataService,RestDataService>();
             return builder.Build();
         }
     }

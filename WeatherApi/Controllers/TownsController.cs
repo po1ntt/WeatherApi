@@ -25,7 +25,7 @@ namespace WeatherApi.Controllers
         [HttpGet("GetTowns")]
         public async Task<List<Towns>> GetTownsAsync()
         {
-            List<Towns> towns =  db.town.ToList();
+            List<Towns> towns = await db.town.ToListAsync();
             return towns;
         }
 

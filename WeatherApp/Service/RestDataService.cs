@@ -15,7 +15,7 @@ using WeatherApp.ViewsModels;
 namespace WeatherApp.Service
 {
     
-    public class RestDataService
+    public class RestDataService : IRestDataService
     {
         public HttpClient httpclient;
         private readonly string Adress;
@@ -36,7 +36,7 @@ namespace WeatherApp.Service
             string result = "ghj";
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
-                Console.WriteLine("504");
+                await Shell.Current.DisplayAlert("Ошибка", "No Internet", "Ок");
                 return result;
             }
             try
@@ -51,12 +51,14 @@ namespace WeatherApp.Service
                 }
                 else
                 {
-                    Console.WriteLine("202");
+                    await Shell.Current.DisplayAlert("Ошибка", "Badrequest", "Ок");
+                    return result;
+
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
                 return result;
             }
             return result;
@@ -122,11 +124,7 @@ namespace WeatherApp.Service
             return result;
         }
 
-        public async Task<Towns> DeleteTownFromFavorite(int id_town)
-        {
-            throw new NotImplementedException();
-        }
-
+    
         public async Task<List<Towns>> GetAllTowns()
         {
             List<Towns> towns = new List<Towns>();
@@ -156,7 +154,7 @@ namespace WeatherApp.Service
             }
             return towns;
         }
-        public async Task<List<Towns>> GetFavTowns(Users users)
+        public async Task<List<Towns>> GetFavTowns()
         {
             List<Towns> towns = new List<Towns>();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
@@ -166,7 +164,7 @@ namespace WeatherApp.Service
             }
             try
             {
-                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/GetFavTowns?id_user={users.id}");
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/GetFavTowns?id_user={Preferences.Default.Get("id_user", 0)}");
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
@@ -196,7 +194,7 @@ namespace WeatherApp.Service
             try
             {
                
-                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/CheckExistFavorite?townid={towns.id_town}&user_id=2");
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Users/CheckExistFavorite?townid={towns.id_town}&user_id={Preferences.Default.Get("id_user",0)}");
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();

@@ -47,7 +47,7 @@ namespace WeatherApi.Controllers
             HttpClient client = new HttpClient();
 
 
-            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&past_days=7")).Result;
+            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&start_date={DateTime.Now.ToString("yyyy-MM-dd")}&end_date={DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")}")).Result;
             resultweather.EnsureSuccessStatusCode();
             if (resultweather != null)
             {
@@ -67,13 +67,13 @@ namespace WeatherApi.Controllers
 
         }
         [HttpGet("GetWetherInInterval")]
-        public async Task<WeatherToScratch>? GetWeatherInInterval(DateTime date1, DateTime date2)
+        public async Task<WeatherInfo>? GetWeatherInInterval(double latitude, double longtitude, DateTime date1, DateTime date2)
         {
             HttpClient client = new HttpClient();
             string dateFirst = date1.ToString(format: ("yyyy-MM-dd"), DateTimeFormatInfo.InvariantInfo);
             string dateEnd = date2.ToString(format: ("yyyy-MM-dd"), DateTimeFormatInfo.InvariantInfo);
 
-            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude=55&longitude=37&hourly=temperature_2m&start_date={dateFirst}&end_date={dateEnd}")).Result;
+            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(latitude, 0)}&longitude={Math.Round(longtitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&start_date={date1}&end_date={date2}")).Result;
 
             resultweather.EnsureSuccessStatusCode();
             if (resultweather != null)
@@ -83,8 +83,20 @@ namespace WeatherApi.Controllers
 
                 string responsebodyweather = await resultweather.Content.ReadAsStringAsync();
                 WeatherToScratch? dataweather = JsonConvert.DeserializeObject<WeatherToScratch>(responsebodyweather);
-
-                return dataweather;
+                WeatherInfo weather = new WeatherInfo();
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+                weather.time = string.Join(' ', dataweather.hourly.time);
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+                weather.temperatyre2M = string.Join(' ', dataweather.hourly.temperature_2m);
+                    weather.precipitation = string.Join(' ', dataweather.hourly.precipitation);
+                    weather.sunrise = string.Join(' ', dataweather.daily.sunrise);
+                    weather.sunset = string.Join(' ', dataweather.daily.sunset);
+                    weather.relativehimidity_2m = string.Join(' ', dataweather.hourly.relativehumidity_2m);
+                    weather.temperatyre_2m_max = string.Join(' ', dataweather.daily.temperature_2m_max);
+                    weather.temperatyre_2m_min = string.Join(' ', dataweather.daily.temperature_2m_min);
+                    weather.dateDay = string.Join(' ', dataweather.daily.dateDay);
+                    weather.updateDate = DateTime.Now;
+                return weather;
 
 
 

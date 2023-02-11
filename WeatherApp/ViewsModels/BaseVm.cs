@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using WeatherApp.Service;
 
 namespace WeatherApp.ViewsModels
 {
@@ -22,11 +23,14 @@ namespace WeatherApp.ViewsModels
                
                 _Isbusy = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(NotIsBusy));
                 
             }
         }
-
-       
+        public bool NotIsBusy => !IsBusy;
+        public BaseVm()
+        {
+        }
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

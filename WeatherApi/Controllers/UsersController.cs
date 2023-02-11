@@ -44,7 +44,7 @@ namespace WeatherApi.Controllers
         [HttpGet("LoginUser")]
         public async Task<User> LoginUser(string username, string password)
         {
-           var user = db.users.FirstOrDefault(p=> p.userName == username && p.userPassword == password);
+           var user = await db.users.FirstOrDefaultAsync(p=> p.userName == username && p.userPassword == password);
            return user;
         }
         [HttpPost("AddFavoriteTownToUser")]
@@ -83,11 +83,11 @@ namespace WeatherApi.Controllers
         public async Task<List<Towns>> GetFavoritesTowns(int id_user)
         {
             List<Towns> listtown = new List<Towns>();
-            var listfav = db.favoriteTowns.ToList().Where(p => p.userId == id_user);
+            var listfav = await db.favoriteTowns.Where(p => p.userId == id_user).ToListAsync();
             
             foreach(var item in listfav)
             {
-                var towninfavorite = db.town.FirstOrDefault(p => p.id_town == item.townId);
+                var towninfavorite = await db.town.FirstOrDefaultAsync(p => p.id_town == item.townId);
                 listtown.Add(towninfavorite);
             }
             return listtown;
@@ -111,7 +111,7 @@ namespace WeatherApi.Controllers
         public async Task<bool> CheckExist(int townid, int user_id)
         {
             bool result = false;
-            var favtown = db.favoriteTowns.FirstOrDefault(p => p.townId == townid && p.userId == user_id);
+            var favtown = await db.favoriteTowns.FirstOrDefaultAsync(p => p.townId == townid && p.userId == user_id);
            if(favtown != null)
             {
                 result = true;

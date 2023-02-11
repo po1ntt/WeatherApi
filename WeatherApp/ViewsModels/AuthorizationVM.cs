@@ -16,55 +16,18 @@ namespace WeatherApp.ViewsModels
     {
 
 
-        RestDataService restDataService = new RestDataService();
         public static Users UserInfo { get; set; }
-		public ICommand AutorizeUser { get; set; }
-        public ICommand NavToReg { get; set; }
-		
-		public AuthorizationVM()
+		public Command AutorizeUser { get; set; }
+        public Command NavToReg { get; set; }
+        public RestDataService _RestDataService;
+
+        public AuthorizationVM()
+
 		{
-            AutorizeUser = new Command(async () =>
-			{
-                if (IsBusy)
-                    return;
-                try
-                {
-                    IsBusy = true;
-                    if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
-                    {
-                        await Shell.Current.DisplayAlert(";(", "Логин или пароль введен неправильно", "Закрыть");
-                    }
-                    else
-                    {
-
-                        UserInfo = await restDataService.AuthorizationUser(Login, Password);
-                        if (UserInfo != null)
-                        {
-                            await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-                        }
-                        else
-                        {
-                            await Shell.Current.DisplayAlert(";(", "Логин или пароль введен неправильно", "Закрыть");
-                        }
-
-                    }
-                }
-                catch(Exception e)
-                {
-                    await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-				
-               
-
-			});
-
+            _RestDataService = new RestDataService();
+            AutorizeUser = new Command(async () => await AuthorizeAsync());
 			NavToReg = new Command(async () =>
 			{
-
 				await Shell.Current.Navigation.PushModalAsync(new RegistrationPage());
 
 
@@ -100,6 +63,43 @@ namespace WeatherApp.ViewsModels
                     OnPropertyChanged();
                 }
 
+            }
+        }
+        public async Task AuthorizeAsync()
+        {
+            if (IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+                {
+                    await Shell.Current.DisplayAlert(";(", "Логин или пароль введен неправильно", "Закрыть");
+                }
+                else
+                {
+
+                    UserInfo = await _RestDataService.AuthorizationUser(Login, Password);
+                    if (UserInfo.id != 0)
+                    {
+                        Preferences.Default.Set("id_user", UserInfo.id);
+
+                        await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert(";(", "Логин или пароль введен неправильно", "Закрыть");
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
        

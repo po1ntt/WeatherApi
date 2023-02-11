@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherApp.Views.AllTowns"
+             Title="Все города"
+             Padding="10"
+             xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
+             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+             xmlns:vievmodel="clr-namespace:WeatherApp.ViewsModels"
+             xmlns:temsel="clr-namespace:WeatherApp"
+             xmlns:model ="clr-namespace:WeatherApp.Models"
+             x:Name="TownsAll"
+             Background="#111">
+    <ContentPage.BindingContext>
+        <vievmodel:HomeVM></vievmodel:HomeVM>
+    </ContentPage.BindingContext>
+    <Grid>
+        <Frame  CornerRadius="5"  BorderColor="Transparent"  BackgroundColor="#80373737">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+
+                </Grid.RowDefinitions>
+               
+                <CollectionView  Grid.Row="1" ItemsSource="{Binding TownsList}" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Never" x:Name="townlist"  >
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Towns">
+                         
+
+                                    <Border  HeightRequest="80" Margin="5"  BackgroundColor="White"  Padding="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="30"></RowDefinition>
+                                                <RowDefinition Height="2"></RowDefinition>
+                                                <RowDefinition Height="30"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                <ColumnDefinition Width="76"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Text="{Binding name}" FontSize="20" FontAttributes="Bold"></Label>
+                                            <Line HeightRequest="3" Grid.Row="1" Background="#141be0"></Line>
+                                            <StackLayout Orientation="Horizontal" Grid.Row="2">
+                                                <Label Margin="0,0,5,0" Text="{Binding country, StringFormat='{0} /'}" Grid.Row="2" FontSize="18" FontAttributes="Bold"></Label>
+                                                <Label Text="{Binding continent}" Grid.Row="2" FontSize="18" FontAttributes="Bold"></Label>
+                                            </StackLayout>
+
+
+                                            <StackLayout Grid.RowSpan="4" Padding="5" Grid.Column="1" Orientation="Horizontal">
+                                        <ImageButton Command="{Binding Source={x:Reference TownsAll}, Path=BindingContext.AddOrRemoveFavorites}"   CommandParameter="{Binding}" IsEnabled="{Binding Source={x:Reference TownsAll}, Path=BindingContext.NotIsBusy}"   Margin="0,0,10,0"  Source="{FontImage Color=#373737, FontFamily=FASolid, Glyph={x:Static fa:Solid.Heart}}">
+
+                                                </ImageButton>
+                                        <ImageButton  Command="{Binding Source={x:Reference TownsAll}, Path=BindingContext.GoToWeather}" CommandParameter="{Binding}" Margin="0,0,5,0"   IsEnabled="{Binding Source={x:Reference TownsAll}, Path=BindingContext.NotIsBusy}"   Source="{FontImage Color=#ab2446, FontFamily=FASolid, Glyph={x:Static fa:Solid.ArrowRight}}">
+
+                                                </ImageButton>
+                                            </StackLayout>
+                                        </Grid>
+                                    </Border>
+                           
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </Grid>
+
+        </Frame>
+        
+    </Grid>
+</ContentPage>

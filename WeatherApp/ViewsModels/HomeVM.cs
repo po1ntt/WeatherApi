@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WeatherApp.Models;
@@ -9,14 +10,14 @@ namespace WeatherApp.ViewsModels
 {
     public partial class HomeVM : BaseVm
     {
-        private readonly Task initTask;
+        private Task initAsync;
+        public Command AddOrRemoveFavorites { get; set; }
+        public Command GoToWeather { get; set; }
+        public Command SearchCommand { get; set; }
+        public Command OutCommand { get; set; }
+        public Command GoToAllTowns { get; set; }
 
-        public ICommand AddOrRemoveFavorites { get; set; }
-        public ICommand GoToWeather { get; set; }
-        public ICommand SearchCommand { get; set; }
-
-
-
+        public Command RefreshFavorites { get; set; }
 
         private ObservableCollection<Towns> _FavoritesTownList;
 
@@ -25,11 +26,10 @@ namespace WeatherApp.ViewsModels
             get => _FavoritesTownList;
             set
             { 
-                if(_FavoritesTownList != value)
-                {
+               
                     _FavoritesTownList = value;
                     OnPropertyChanged();
-                }
+                
 
             
             }
@@ -45,16 +45,14 @@ namespace WeatherApp.ViewsModels
             get => _TownsList;
             set
             {
-                if (_TownsList != value)
-                {
+             
                     _TownsList = value;
                     OnPropertyChanged();
-                }
+                
              }
         }
 
 
-        public RestDataService restDataserv = new RestDataService();
 
         private string _SearchInfo;
 
@@ -124,128 +122,31 @@ namespace WeatherApp.ViewsModels
 
             }
         }
+        public RestDataService _RestDataService;
 
         public HomeVM()
         {
-            
+            _RestDataService = new RestDataService();
             FavoritesTownList = new ObservableCollection<Towns>();
             TownsList = new ObservableCollection<Towns>();
-            SearchCommand = new Command(async () =>
-            {
-                if (IsBusy)
-                    return;
-                try
-                {
-                    IsBusy = true;
-                    IsRunningForButton = true;
-                      RestDataService restData = new RestDataService();
-                    Towns towns = await restData.AddTown(SearchInfo);
-                    if(towns.id_town != 0)
-                    {
-                        Weather weather = await restData.GetWeatherInfoByTown(towns.id_town);
-                        if (weather != null)
-                        {
-                           
-                            await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
-                        }
-                        else
-                        {
-                            await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
+            SearchCommand = new Command(async () => await FindWeather());
+            GoToWeather = new Command(async (object args) => await FindWeather(args));
+            GoToAllTowns = new Command(async () => await Shell.Current.Navigation.PushAsync(new AllTowns()));
+            RefreshFavorites = new Command(async () => await RefreshFavoritesTask());
 
-                        }
-
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlert("Ошибка", "Город не найден", "Ок");
-                    }
-                }
-                catch(Exception e)
-                {
-                    await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
-                }
-                finally
-                {
-                    IsRunningForButton = false;
-
-                    IsBusy = false;
-                }
-            });
-            AddOrRemoveFavorites = new Command(async (object? args) =>
-            {
-                if (args is Towns towns)
-                {
-                    if (IsBusy)
-                        return;
-                    try
-                    {
-                        IsBusy = true; IsRunningForListTowns = true;
-                        RestDataService restdata = new RestDataService();
-                        FavoriteTowns favoriteTowns = new FavoriteTowns();
-                        favoriteTowns.townId = towns.id_town;
-                        favoriteTowns.userId = AuthorizationVM.UserInfo.id;
-                        string result = await restdata.AddFavoriteTown(favoriteTowns);
-                        await Task.Delay(600);
-                        List<Towns> listfav = await restdata.GetFavTowns(AuthorizationVM.UserInfo);
-                        if (FavoritesTownList.Count != 0)
-                        {
-                            FavoritesTownList.Clear();
-
-                        }
-                        foreach (var item in listfav)
-                        {
-
-                            FavoritesTownList.Add(item);
-                        }
-                        var alltow = await restdata.GetAllTowns();
-                        if (TownsList.Count != 0)
-                        {
-                            TownsList.Clear();
-                        }
-                        foreach (var item in alltow)
-                        {
-
-
-                            var town = listfav.FirstOrDefault(p => p.id_town == item.id_town);
-                            if (town != null)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                TownsList.Add(item);
-
-
-                            }
-
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        await Shell.Current.DisplayAlert("Ошибка",e.Message,"Ок");
-                    }
-                    finally
-                    {
-                        IsRunningForListTowns = false;
-
-                        IsBusy = false;
-                    }
-                   
-                }
-            });
-            this.initTask = InitAsync();
+            AddOrRemoveFavorites = new Command(async (object? args) => await AddOrDeleteFavorite(args));
+            initAsync = InitAsync();
 
         }
-        private async Task InitAsync()
+        public async Task InitAsync()
         {
             if (IsBusy)
                 return;
             try
             {
            
-                RestDataService restData = new RestDataService();
                 IsBusy = true;
-                List<Towns> listfav = await restData.GetFavTowns(AuthorizationVM.UserInfo);
+                List<Towns> listfav = await _RestDataService.GetFavTowns();
                 if (FavoritesTownList.Count != 0)
                 {
                     FavoritesTownList.Clear();
@@ -256,7 +157,7 @@ namespace WeatherApp.ViewsModels
                    
                     FavoritesTownList.Add(item);
                 }
-                var alltow = await restData.GetAllTowns();
+                var alltow = await _RestDataService.GetAllTowns();
                 if (TownsList.Count != 0)
                 {
                     TownsList.Clear();
@@ -280,6 +181,7 @@ namespace WeatherApp.ViewsModels
                 }
               
             }
+           
             catch(Exception ex)
             {
                 await Shell.Current.DisplayAlert("ex", ex.Message, "ok");
@@ -289,13 +191,141 @@ namespace WeatherApp.ViewsModels
             {
                 IsBusy = false;        
             }
-           
-
-         
-           
 
         }
-      
+        public async Task AddOrDeleteFavorite(object args)
+        {
+            if (args is Towns towns)
+            {
+                if (IsBusy)
+                    return;
+                try
+                {
+                    IsBusy = true; IsRunningForListTowns = true;
+                    FavoriteTowns favoriteTowns = new FavoriteTowns();
+                    favoriteTowns.townId = towns.id_town;
+                    favoriteTowns.userId = Preferences.Default.Get("id_user", 0);
+                    var result = await _RestDataService.AddFavoriteTown(favoriteTowns);
+                    if (result == "plus")
+                    {
+                       
+                        TownsList.Remove(towns);
+                    }
+                    else
+                    {
+                        FavoritesTownList.Remove(towns);
+                        TownsList.Add(towns);
+                    }
+                }
+                catch (Exception e)
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+                }
+                finally
+                {
+                    IsRunningForListTowns = false;
+                    IsBusy = false;
+                }
+
+            }
+        }
+        public async Task FindWeather()
+        {
+            if (IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                IsRunningForButton = true;
+               
+                Towns towns = await _RestDataService.AddTown(SearchInfo);
+                if (towns.id_town != 0)
+                {
+                    if (!FavoritesTownList.Contains(towns))
+                    {
+                        if (!TownsList.Contains(towns))
+                        {
+                            TownsList.Add(towns);
+                        }
+                    }
+                    Weather weather = await _RestDataService.GetWeatherInfoByTown(towns.id_town);
+                    if (weather != null)
+                    {
+                        await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", "Город не найден", "Ок");
+                }
+            }
+            catch (Exception e)
+            {
+                await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+            }
+            finally
+            {
+                IsRunningForButton = false;
+                IsBusy = false;
+            }
+        }
+        public async Task FindWeather(object args)
+        {
+            if (IsBusy)
+                return;
+            try
+            {
+                IsBusy = true;
+                IsRunningForButton = true;
+                if(args is Towns towns)
+                {
+                    if (towns.id_town != 0)
+                    {
+                        Weather weather = await _RestDataService.GetWeatherInfoByTown(towns.id_town);
+                        if (weather != null)
+                        {
+                            await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
+                        }
+                        else
+                        {
+                            await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
+                        }
+                    }
+                    else
+                    {
+                        await Shell.Current.DisplayAlert("Ошибка", "Город не найден", "Ок");
+                    }
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", "Город не найден", "Ок");
+
+                }
+            }
+            catch (Exception e)
+            {
+                await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+            }
+            finally
+            {
+                IsRunningForButton = false;
+                IsBusy = false;
+            }
+        }
+        public async Task RefreshFavoritesTask()
+        {
+            var favorites = await _RestDataService.GetFavTowns();
+            if (FavoritesTownList.Count() != 0)
+                FavoritesTownList.Clear();
+            foreach(var item in favorites)
+            {
+                FavoritesTownList.Add(item);
+            }
+        }
 
     }
 }

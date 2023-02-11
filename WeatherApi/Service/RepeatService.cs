@@ -39,7 +39,7 @@ namespace WeatherApi.Service
 
                     try
                     {
-                        resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&past_days=7")).Result;
+                        resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(town.latitude, 0)}&longitude={Math.Round(town.longitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&start_date={DateTime.Now.ToString("yyyy-MM-dd")}&end_date={DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")}")).Result;
                         resultweather.EnsureSuccessStatusCode();
 
                     }
