@@ -7,10 +7,7 @@ public partial class AuthorizePage : ContentPage
 	public AuthorizePage()
 	{
 		InitializeComponent();
-		if(Preferences.Default.Get("id_user", 0) != 0)
-		{
-		     Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-		}
+		
       
 	}
 }

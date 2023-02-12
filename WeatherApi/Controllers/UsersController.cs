@@ -29,13 +29,13 @@ namespace WeatherApi.Controllers
       
         #endregion
         [HttpPost("AddUser")]
-        public async Task<string> AddUserAsync(string username, string password)
+        public async Task<string> AddUserAsync(User user)
         {
             db.users.Add(new User
             {
 
-                userName = username,
-                userPassword = password
+                userName = user.userName,
+                userPassword = user.userPassword
             });
             await db.SaveChangesAsync();
 

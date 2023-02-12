@@ -25,9 +25,10 @@ namespace WeatherApp.ViewsModels
                 Users users = new Users();
                 users.userPassword = Password;
                 users.userName = Login;
-                bool result = await restDataService.RegistrationUser(users);
-                if (result)
+                string result = await restDataService.RegistrationUser(users);
+                if (!string.IsNullOrWhiteSpace(result))
                 {
+                    await Shell.Current.DisplayAlert("--", result, "ок");
                     await Shell.Current.Navigation.PopAsync();
                 }
                 else

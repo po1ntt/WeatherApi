@@ -43,7 +43,7 @@ namespace WeatherApp.Service
             {
                
                 var json = JsonSerializer.Serialize(favoriteTowns);
-                StringContent favtowns = new StringContent(json, Encoding.UTF8, "application/json");
+                StringContent favtowns = new(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await httpclient.PostAsync($"{Adress}/Users/AddFavoriteTownToUser", favtowns);
                 if (response.IsSuccessStatusCode)
                 {
@@ -66,7 +66,7 @@ namespace WeatherApp.Service
 
         public async Task<Towns> AddTown(string nametown1)
         {
-            Towns towns = new Towns();
+            Towns towns = new ();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -75,7 +75,7 @@ namespace WeatherApp.Service
             try
             {
                 var json = JsonSerializer.Serialize(nametown1);
-                StringContent nametown = new StringContent(json, Encoding.UTF8, "application/json");
+                StringContent nametown = new(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await httpclient.PostAsync($"{Adress}/Weather/addnewtown", nametown);
                 if (response.IsSuccessStatusCode)
                 {
@@ -97,7 +97,7 @@ namespace WeatherApp.Service
 
         public async Task<Users> AuthorizationUser(string username, string password)
         {
-            Users result = new Users();
+            Users result = new ();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -127,7 +127,7 @@ namespace WeatherApp.Service
     
         public async Task<List<Towns>> GetAllTowns()
         {
-            List<Towns> towns = new List<Towns>();
+            List<Towns> towns = new();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -156,7 +156,7 @@ namespace WeatherApp.Service
         }
         public async Task<List<Towns>> GetFavTowns()
         {
-            List<Towns> towns = new List<Towns>();
+            List<Towns> towns = new();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -215,7 +215,7 @@ namespace WeatherApp.Service
 
         public async Task<Weather> GetWeatherInfoByTown(int id_town)
         {
-            Weather weather = new Weather();
+            Weather weather = new();
             if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             {
                 Console.WriteLine("504");
@@ -242,10 +242,67 @@ namespace WeatherApp.Service
             }
             return weather;
         }
-
-        public async Task<bool> RegistrationUser(Users users)
+        public async Task<Weather> GetWeatherInfoByTownInInterval(double latitude, double longtitude, DateTime startdate, DateTime enddate)
         {
-            throw new NotImplementedException();
+            Weather weather = new();
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                Console.WriteLine("504");
+                return weather;
+            }
+            try
+            {
+
+                HttpResponseMessage response = await httpclient.GetAsync($"{Adress}/Weather/GetWetherInInterval?latitude={latitude}&longtitude={longtitude}&date1={startdate}&date2={enddate}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    weather = JsonSerializer.Deserialize<Weather>(data);
+                }
+                else
+                {
+                    Console.WriteLine("202");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return weather;
+            }
+            return weather;
+        }
+
+        public async Task<string> RegistrationUser(Users users)
+        {   
+            string result = "";
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Shell.Current.DisplayAlert("Ошибка", "No Internet", "Ок");
+                return result;
+            }
+            try
+            {
+
+                var json = JsonSerializer.Serialize(users);
+                StringContent user = new(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await httpclient.PostAsync($"{Adress}/Users/AddUser", user);
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Ошибка", "Badrequest", "Ок");
+                    return result;
+
+                }
+            }
+            catch (Exception e)
+            {
+                await Shell.Current.DisplayAlert("Ошибка", e.Message, "Ок");
+                return result;
+            }
+            return result;
         }
     }
 }

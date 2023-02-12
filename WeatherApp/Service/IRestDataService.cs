@@ -15,7 +15,7 @@ namespace WeatherApp.Service
         Task<List<Towns>> GetFavTowns();
         Task<bool> checkIsFavoriteTown(Towns towns);
         Task<Weather> GetWeatherInfoByTown(int id_town);
-        Task<bool> RegistrationUser(Users users);
+        Task<string> RegistrationUser(Users users);
         Task<List<Towns>> GetAllTowns();
     }
 }

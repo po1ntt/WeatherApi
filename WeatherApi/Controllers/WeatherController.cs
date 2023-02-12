@@ -73,7 +73,7 @@ namespace WeatherApi.Controllers
             string dateFirst = date1.ToString(format: ("yyyy-MM-dd"), DateTimeFormatInfo.InvariantInfo);
             string dateEnd = date2.ToString(format: ("yyyy-MM-dd"), DateTimeFormatInfo.InvariantInfo);
 
-            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(latitude, 0)}&longitude={Math.Round(longtitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&start_date={date1}&end_date={date2}")).Result;
+            var resultweather = client.GetAsync(string.Format($"http://api.open-meteo.com/v1/forecast?latitude={Math.Round(latitude, 0)}&longitude={Math.Round(longtitude, 0)}&hourly=temperature_2m,relativehumidity_2m,precipitation&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&windspeed_unit=ms&timezone=auto&start_date={dateFirst}&end_date={dateEnd}")).Result;
 
             resultweather.EnsureSuccessStatusCode();
             if (resultweather != null)

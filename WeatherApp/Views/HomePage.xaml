@@ -18,7 +18,7 @@
         <vievmodel:HomeVM></vievmodel:HomeVM>
     </ContentPage.BindingContext>
     <ContentPage.ToolbarItems>
-        <ToolbarItem Order="Primary" IconImageSource="{FontImage FontFamily=FASolid, Color=Red, Glyph={x:Static fa:Solid.RightFromBracket}}" Text="Выйти"></ToolbarItem>
+        <ToolbarItem Order="Primary" Command="{Binding OutCommand}" IconImageSource="{FontImage FontFamily=FASolid, Color=Red, Glyph={x:Static fa:Solid.RightFromBracket}}" Text="Выйти"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
        
@@ -29,7 +29,7 @@
                 <ActivityIndicator IsRunning="{Binding IsRunningForButton}" Color="#141be0" WidthRequest="25" HeightRequest="25"></ActivityIndicator>
             <StackLayout Margin="0,0,0,10">
                     <Label Margin="0,0,0,8" TextColor="White" Text="Если нету в списке(Добавит новый город и погоду):" FontSize="13" FontAttributes="Bold"></Label>
-                    <uranium:TextField  Text="{Binding SearchInfo}" Icon="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,0" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
+                    <uranium:TextField  Text="{Binding SearchInfo, Mode=TwoWay}" Icon="{FontImage Color=White, FontFamily=FASolid, Glyph={x:Static fa:Solid.MagnifyingGlass}}" Margin="0,10,0,0" CornerRadius="5" BorderColor="White"  TextColor="White" AccentColor="White" Title="Название города">
                     </uranium:TextField>
             </StackLayout>
 
@@ -63,7 +63,7 @@
                             </StackLayout>
                         <ImageButton  VerticalOptions="CenterAndExpand" Grid.Column="1" Command="{Binding RefreshFavorites}" IsEnabled="{Binding NotIsBusy}" Source="{FontImage Color=#141be0, FontFamily=FASolid, Glyph={x:Static fa:Solid.ArrowsRotate}}" ></ImageButton>
                     </Grid>
-                    <CollectionView ItemSizingStrategy="MeasureAllItems" x:Name="FavList" MaximumHeightRequest="340"  SelectionMode="None"  ItemsSource="{Binding FavoritesTownList}">
+                    <CollectionView ItemSizingStrategy="MeasureAllItems" x:Name="FavList" MaximumHeightRequest="340"  SelectionMode="None"  ItemsSource="{Binding FavoritesTownList, Mode=TwoWay}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="model:Towns" >
                                             <Border   HeightRequest="80" Margin="5"  BackgroundColor="White"  Padding="5">
@@ -103,7 +103,7 @@
                     </Border>
             <Button Margin="0,0,0,15"   TextColor="White" BackgroundColor="#141be0" Command="{Binding GoToAllTowns}" CornerRadius="5" Text="Все города" />
 
-            <Button   TextColor="White" BackgroundColor="#141be0" CornerRadius="5" Text="Случайный город" />
+            <Button  Command="{Binding CommandRandom}"  TextColor="White" BackgroundColor="#141be0" CornerRadius="5" Text="Случайный город" />
 
 
         </VerticalStackLayout>

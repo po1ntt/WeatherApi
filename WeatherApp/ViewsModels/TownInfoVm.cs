@@ -17,6 +17,8 @@ namespace WeatherApp.ViewsModels
     public class TownInfoVm : BaseVm
     {
          public Command SelectionChanged { get; set; }
+        public Command ChangeInterval { get; set; }
+
         public ISeries[] Series { get; set; }
 
         private System.Drawing.Color _ColorForTown;
@@ -25,6 +27,27 @@ namespace WeatherApp.ViewsModels
         {
             get => _ColorForTown;
             set { _ColorForTown = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTime _StartDate;
+
+        public DateTime StartDate
+        {
+            get => _StartDate;
+            set { _StartDate = value;
+                OnPropertyChanged();
+            }
+        }
+        private DateTime _EndDate;
+
+        public DateTime EndDate
+        {
+            get => _EndDate;
+            set
+            {
+                _EndDate = value;
                 OnPropertyChanged();
             }
         }
@@ -99,16 +122,17 @@ namespace WeatherApp.ViewsModels
 
         public RestDataService _RestDataService;
 
+        public WeatherConvertToDaily _WeatherConvert;
         public TownInfoVm(Weather weather, Towns town)
         {
             _RestDataService = new RestDataService();
-
+            _WeatherConvert = new WeatherConvertToDaily();
             ListDailyData = new ObservableCollection<Daily>();
             TownInfo = new Towns();
             WeatherInfo = new Weather();
             Temperatyre_2m = new ObservableCollection<DateTimePoint>();
             SelectionChanged = new Command( () => ChangeTemperatyre());
-
+            ChangeInterval = new Command(async () => await UpdateIntervalDates(town));
             initAsync(weather, town);
            
 
@@ -129,10 +153,9 @@ namespace WeatherApp.ViewsModels
         {
             TownInfo = towns;
             WeatherInfo = weather;
-            Service.WeatherConvertToDaily weatherConvertToDaily = new Service.WeatherConvertToDaily();
 
           
-            List<Daily> data = weatherConvertToDaily.ReturnDaily(weather);
+            List<Daily> data = _WeatherConvert.ReturnDaily(weather);
             foreach (var item in data)
             {
                 ListDailyData.Add(item);
@@ -155,6 +178,9 @@ namespace WeatherApp.ViewsModels
 
                   TooltipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long) chartPoint.SecondaryValue):h:mm}: {chartPoint.PrimaryValue}",
+                 
+                        
+                     
                   DataLabelsSize= 24,
                   GeometrySize= 10,
                 Values = Temperatyre_2m,
@@ -162,6 +188,26 @@ namespace WeatherApp.ViewsModels
 
                 }
                };
+        }
+        public async Task UpdateIntervalDates(Towns towns)
+        {
+            if (EndDate >= StartDate)
+            {
+                Weather weather = await _RestDataService.GetWeatherInfoByTownInInterval(towns.latitude, towns.longitude, StartDate, EndDate);
+                List<Daily> data = _WeatherConvert.ReturnDaily(weather);
+                ListDailyData.Clear();
+                foreach (var item in data)
+                {
+                    ListDailyData.Add(item);
+                }
+                DailyData = ListDailyData.FirstOrDefault();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Ошибка", "Конечная дата должна быть больше или равна начальной дате", "Ок");
+            }
+           
+           
         }
         public async Task AddOrDeleteFavorite(Towns towns)
         {

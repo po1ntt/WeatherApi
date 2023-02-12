@@ -22,7 +22,7 @@
 
                 </Grid.RowDefinitions>
                
-                <CollectionView  Grid.Row="1" ItemsSource="{Binding TownsList}" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Never" x:Name="townlist"  >
+                <CollectionView  Grid.Row="1" ItemsSource="{Binding TownsList, Mode=TwoWay}" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Never" x:Name="townlist"  >
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" />
                     </CollectionView.ItemsLayout>

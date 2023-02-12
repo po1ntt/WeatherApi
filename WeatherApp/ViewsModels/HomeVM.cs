@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Maui.Controls;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -16,7 +17,7 @@ namespace WeatherApp.ViewsModels
         public Command SearchCommand { get; set; }
         public Command OutCommand { get; set; }
         public Command GoToAllTowns { get; set; }
-
+        public Command CommandRandom { get; set; }
         public Command RefreshFavorites { get; set; }
 
         private ObservableCollection<Towns> _FavoritesTownList;
@@ -133,10 +134,26 @@ namespace WeatherApp.ViewsModels
             GoToWeather = new Command(async (object args) => await FindWeather(args));
             GoToAllTowns = new Command(async () => await Shell.Current.Navigation.PushAsync(new AllTowns()));
             RefreshFavorites = new Command(async () => await RefreshFavoritesTask());
-
+            OutCommand = new Command( () => OutAccount());
             AddOrRemoveFavorites = new Command(async (object? args) => await AddOrDeleteFavorite(args));
+            CommandRandom = new Command(async () => await RandomCity());
             initAsync = InitAsync();
-
+        }
+        public void OutAccount()
+        {
+            Preferences.Clear();
+            FavoritesTownList.Clear();
+            TownsList.Clear();
+            SearchInfo = "";
+            App.Current.MainPage = new AuthorizePage();
+        }
+        public async Task RandomCity()
+        {
+            Random random = new Random();
+            List<Towns> towns = await _RestDataService.GetAllTowns();
+            int index = random.Next(towns.Count() - 1);
+            Towns towns1 = towns[index];
+            await GetWeatherAndDisplay(towns1);
         }
         public async Task InitAsync()
         {
@@ -248,15 +265,7 @@ namespace WeatherApp.ViewsModels
                             TownsList.Add(towns);
                         }
                     }
-                    Weather weather = await _RestDataService.GetWeatherInfoByTown(towns.id_town);
-                    if (weather != null)
-                    {
-                        await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
-                    }
+                    await GetWeatherAndDisplay(towns);
                 }
                 else
                 {
@@ -285,15 +294,7 @@ namespace WeatherApp.ViewsModels
                 {
                     if (towns.id_town != 0)
                     {
-                        Weather weather = await _RestDataService.GetWeatherInfoByTown(towns.id_town);
-                        if (weather != null)
-                        {
-                            await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
-                        }
-                        else
-                        {
-                            await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
-                        }
+                        await GetWeatherAndDisplay(towns);
                     }
                     else
                     {
@@ -314,6 +315,18 @@ namespace WeatherApp.ViewsModels
             {
                 IsRunningForButton = false;
                 IsBusy = false;
+            }
+        }
+        public async Task GetWeatherAndDisplay(Towns towns)
+        {
+            Weather weather = await _RestDataService.GetWeatherInfoByTown(towns.id_town);
+            if (weather != null)
+            {
+                await Shell.Current.Navigation.PushAsync(new TownInfoPage(weather, towns));
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Ошибка", "Погода не найдена", "Ок");
             }
         }
         public async Task RefreshFavoritesTask()

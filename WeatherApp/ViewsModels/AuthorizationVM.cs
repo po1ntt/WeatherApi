@@ -84,7 +84,7 @@ namespace WeatherApp.ViewsModels
                     {
                         Preferences.Default.Set("id_user", UserInfo.id);
 
-                        await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                        App.Current.MainPage = new AppShell();
                     }
                     else
                     {

@@ -9,10 +9,7 @@
     >
 
 
-    <ShellContent
-        Title="authorize"
-        ContentTemplate="{DataTemplate local:AuthorizePage}"
-        Route="AuthorizePage" />
+
     <ShellContent
         Title="home"
         ContentTemplate="{DataTemplate local:HomePage}"
